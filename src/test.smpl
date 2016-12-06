@@ -32,15 +32,35 @@ println("#c0072: " + #c0072);
 
 println(">>> End of Character tests <<<\n");
 
+println(">>> Boolean tests <<<");
+
+println("#t: " + #t);
+println("#f: " + #f);
+println("not #t: " + (not #t));
+println("not #f: " + (not #f));
+println("#t and #t: " + (#t and #t));
+println("#t and #f: " + (#t and #f));
+println("#f and #t: " + (#f and #t));
+println("#f and #f: " + (#f and #f));
+println("#t or #t: " + (#t or #t));
+println("#t or #f: " + (#t or #f));
+println("#f or #t: " + (#f or #t));
+println("#f or #f: " + (#f or #f));
+println("#f or not #f and #t: " + (#f or not #f and #t));
+
+println(">>> End of Boolean tests <<<\n");
+
 println(">>> Variables tests <<<");
 
 x := 5;
 y := #cQ;
 z := -4;
+b := #t;
 
 println("x: " + x);
 println("y: " + y);
-println("y: " + z);
+println("z: " + z);
+println("b: " + b);
 
 println(">>> End of Variables tests <<<\n");
 
