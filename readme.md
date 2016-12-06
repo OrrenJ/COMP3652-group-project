@@ -57,6 +57,6 @@ Optional (without suggested implementation)
 * additional control structures
 * exceptions
 * macros
-* call by name
+* call-by-name
 * threads
 
