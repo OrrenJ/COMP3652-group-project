@@ -27,7 +27,7 @@ public class Repl {
     public static void repl(Environment env) {
 		InputStreamReader reader = new InputStreamReader(System.in);
 		while (true) {
-		    parseEvalShow(reader, env);
+		    parseEvalShow(reader, env, false);
 		}
     }
 
@@ -35,17 +35,18 @@ public class Repl {
     	try {
     		File file = new File(filename);
     		FileReader reader = new FileReader(file);
-    		parseEvalShow(reader, env);
+    		parseEvalShow(reader, env, true);
     	} catch(FileNotFoundException e) {
     		System.out.println("Could not find " + filename);
     	}
     }
 
-    public static void parseEvalShow(Reader reader, Environment env) {
+    public static void parseEvalShow(Reader reader, Environment env, boolean usingFile) {
 		SmplParser parser;
 		SmplProgram program = null;
 		Evaluator interp = new Evaluator();
-		System.out.print(PROMPT);
+		if(!usingFile)
+			System.out.print(PROMPT);
 		try {
 		    parser = new SmplParser(new SmplLexer(reader));
 		    program = (SmplProgram) parser.parse().value;
@@ -58,7 +59,9 @@ public class Repl {
 		    try {
 		    	Object result;
 				result = program.visit(interp, env);
-				System.out.println("\nResult: " + result);
+				// uncomment the following line to automatically print the result of the last expression
+				//System.out.println("\nResult: " + result);
+				//System.out.println("");		// new line at end of output
 		    } catch (SmplException e) {
 				System.out.println(e.getMessage());
 		    }

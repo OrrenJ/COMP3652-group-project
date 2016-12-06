@@ -2,10 +2,14 @@ SMPL Interpreter
 ================
 
 Example of compile command from src folder on a Linux system
-```javac -cp .:/usr/share/java/cup.jar **/*.java```
+```
+javac -cp .:/usr/share/java/cup.jar **/*.java
+```
 
 Example of run command from src folder on a Linux system
-```java -cp .:/usr/share/java/cup.jar smpl.sys.Repl test.smpl```
+```
+java -cp .:/usr/share/java/cup.jar smpl.sys.Repl test.smpl
+```
 
 
 Completed
@@ -30,6 +34,7 @@ Completed
 * negative expressions
 * { ... }
 * comments
+* `print`, `println`
 
 TO DO
 -----
@@ -45,7 +50,6 @@ TO DO
 * `if <expr> then <expr> [else <expr>]`
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
 * multi-valued expression
-* `print`, `println`
 * `read`, `readint`
 
 Optional (with suggested implementation)

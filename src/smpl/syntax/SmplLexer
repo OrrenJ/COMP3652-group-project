@@ -67,7 +67,9 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 //"	// comment stop Java IDE from showing rest of code as if it's inside quotes
 
-comment = (\/\*(.*?)\*\/)|(\/\/(.*?){nl})
+any = .|{ws}
+
+comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
 
 %%
 
@@ -117,6 +119,9 @@ comment = (\/\*(.*?)\*\/)|(\/\/(.*?){nl})
 <YYINITIAL> "pair" 	{return new Symbol(sym.PAIR);}
 <YYINITIAL> "car" 	{return new Symbol(sym.CAR);}
 <YYINITIAL> "cdr" 	{return new Symbol(sym.CDR);}
+
+<YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
+<YYINITIAL> "println" 	{return new Symbol(sym.PRINTLN);}
 
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER

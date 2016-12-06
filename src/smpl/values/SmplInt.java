@@ -51,10 +51,7 @@ public class SmplInt extends SmplValue<SmplInt> {
 	}
 
 	public SmplValue<?> div(SmplValue<?> arg) throws SmplException {
-		if(arg.isInteger()) 
-			return make(val / arg.intValue());
-		else
-			return make(val / arg.doubleValue());
+		return make(val / arg.doubleValue());
 	}
 
 	public SmplValue<?> mod(SmplValue<?> arg) throws SmplException {

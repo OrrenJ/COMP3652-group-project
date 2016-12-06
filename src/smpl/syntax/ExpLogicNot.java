@@ -15,7 +15,6 @@ public class ExpLogicNot extends Exp {
     return exp;
   }
 
-
   @Override
   public <S, T> T visit(Visitor<S, T> v, S arg) throws SmplException {
     return v.visitExpLogicNot(this, arg);

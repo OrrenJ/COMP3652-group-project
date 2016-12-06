@@ -15,7 +15,6 @@ public class ExpBitWiseNot extends Exp {
     return exp;
   }
 
-
   @Override
   public <S, T> T visit(Visitor<S, T> v, S arg) throws SmplException {
     return v.visitExpBitWiseNot(this, arg);

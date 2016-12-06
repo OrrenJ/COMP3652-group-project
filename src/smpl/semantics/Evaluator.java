@@ -4,6 +4,7 @@ import smpl.syntax.SmplProgram;
 import smpl.syntax.StmtSequence;
 import smpl.syntax.Statement;
 import smpl.syntax.StmtDefinition;
+import smpl.syntax.StmtPrint;
 import smpl.syntax.Exp;
 import smpl.syntax.ExpLit;
 import smpl.syntax.ExpVar;
@@ -83,6 +84,14 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	}
 
 	@Override
+	public SmplValue<?> visitStmtPrint(StmtPrint sp, Environment<SmplValue<?>> env) throws SmplException{
+		//System.out.println(sp.getExp());
+		result = sp.getExp().visit(this, env);
+		System.out.print(result.toString() + sp.getTerminatingCharacter());
+		return result;
+	}
+
+	@Override
 	public SmplValue<?> visitExpAdd(ExpAdd exp, Environment<SmplValue<?>> env) throws SmplException {
 		SmplValue<?> lval, rval;
 		lval = exp.getExpL().visit(this, env);
@@ -150,8 +159,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpPairCheck(ExpPairCheck exp, Environment<SmplValue<?>> env) throws SmplException {
 		Exp toCheck = exp.getExp();
-		SmplValue<?> checked = toCheck.visit(this, env);
-		SmplType type = checked.getType();
+		result = toCheck.visit(this, env);
+		SmplType type = result.getType();
 
 		return new SmplBool(type == SmplType.PAIR);
 	}
@@ -159,11 +168,11 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpCar(ExpCar exp, Environment<SmplValue<?>> env) throws SmplException {
 		// check that expression is a pair
-		SmplValue<?> val = exp.getExp().visit(this, env);
-		SmplType type = val.getType();
+		result = exp.getExp().visit(this, env);
+		SmplType type = result.getType();
 
 		if(type == SmplType.PAIR)
-			return ((SmplPair)val).getFirstValue();
+			return ((SmplPair)result).getFirstValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -171,11 +180,11 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpCdr(ExpCdr exp, Environment<SmplValue<?>> env) throws SmplException {
 		// check that expression is a pair
-		SmplValue<?> val = exp.getExp().visit(this, env);
-		SmplType type = val.getType();
+		result = exp.getExp().visit(this, env);
+		SmplType type = result.getType();
 
 		if(type == SmplType.PAIR)
-			return ((SmplPair)val).getSecondValue();
+			return ((SmplPair)result).getSecondValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -230,8 +239,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitExpLogicNot(ExpLogicNot exp, Environment<SmplValue<?>> env) throws SmplException {
-		SmplValue<?> val = exp.getExp().visit(this, env);
-		return val.not();
+		result = exp.getExp().visit(this, env);
+		return result.not();
 	}
 
 	@Override
@@ -252,8 +261,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitExpBitWiseNot(ExpBitWiseNot exp, Environment<SmplValue<?>> env) throws SmplException {
-		SmplValue<?> val = exp.getExp().visit(this, env);
-		return val.bitnot();
+		result = exp.getExp().visit(this, env);
+		return result.bitnot();
 	}
 
 	@Override

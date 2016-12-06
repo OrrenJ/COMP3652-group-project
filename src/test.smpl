@@ -1,2 +1,45 @@
-// arithmetic tests
-p := pair(2 & 5, 2 | 5);
+
+// comment tests
+
+println(">>> Comments <<<");
+
+1 + // this is a comment
+2;
+
+1 + /* this is also a comment */ 2;
+
+1 + /* this is a 
+		multiline
+		comment */  2;
+
+println(">>> End of comments <<<\n");
+
+// integers
+
+println(">>> Integer tests <<<");
+
+println("5: " + 5);
+println("#b10001: " + #b10001);
+println("#xc0ff: " + #xc00ff);
+
+println(">>> End of Integer tests <<<\n");
+
+println(">>> Character tests <<<");
+
+println("#cY: " + #cY);
+println("#c\\\\: " + #c\\);
+println("#c0072: " + #c0072);
+
+println(">>> End of Character tests <<<\n");
+
+println(">>> Variables tests <<<");
+
+x := 5;
+y := #cQ;
+z := -4;
+
+println("x := " + x);
+println("y := " + y);
+println("y := " + z);
+
+println(">>> End of Variables tests <<<\n");

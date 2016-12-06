@@ -70,7 +70,7 @@ terminal LNOT, LAND, LOR;
 terminal ASSIGN;
 
 // key words
-terminal PAIR, PAIRCHECK, CAR, CDR;
+terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -85,6 +85,7 @@ non terminal SmplProgram program;
 non terminal StmtSequence stmtList;
 non terminal Statement stmt;
 non terminal StmtDefinition definition;
+non terminal StmtPrint print;
 
 non terminal Exp expression;
 
@@ -125,10 +126,17 @@ stmtList ::= stmtList:lst stmt:s {:
 			:};
 
 stmt ::= definition:d SEMI {: RESULT = d; :} |
+			print:p SEMI {: RESULT = p; :} |
 			expression:e SEMI {: RESULT = e; :};
 
 definition ::= VARIABLE:v ASSIGN expression:e {:
 				RESULT = new StmtDefinition(v, e); 
+			:};
+
+print ::= PRINT LPAREN expression:e RPAREN {:
+				RESULT = new StmtPrint(e); :} |
+			PRINTLN LPAREN expression:e RPAREN {:
+				RESULT = new StmtPrint(e, '\n'); 
 			:};
 
 expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
@@ -180,7 +188,7 @@ term ::= term:t MUL bitnot:b {:
 			RESULT = new ExpMod(t, b); :} | 
 		bitnot:b {: RESULT = b; :};
 
-bitnot ::= BNOT power:p {: new ExpBitWiseNot(p); :} |
+bitnot ::= BNOT power:p {: RESULT = new ExpBitWiseNot(p); :} |
 		power:p {: RESULT = p; :};
 
 power ::= power:p POW posneg:f {:

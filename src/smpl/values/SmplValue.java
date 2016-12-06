@@ -38,6 +38,8 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 			return new SmplChar('\t');
 		} else if(v.equals("\\\\")){
 			return new SmplChar('\\');
+		} else if(v.equals("\\\"")){
+			return new SmplChar('\"');
 		} else {
 			return new SmplChar(v.charAt(0));
 		}

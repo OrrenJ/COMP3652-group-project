@@ -4,6 +4,7 @@ import smpl.syntax.SmplProgram;
 import smpl.syntax.StmtSequence;
 import smpl.syntax.Statement;
 import smpl.syntax.StmtDefinition;
+import smpl.syntax.StmtPrint;
 import smpl.syntax.ExpLit;
 import smpl.syntax.ExpVar;
 import smpl.syntax.ExpAdd;
@@ -38,6 +39,7 @@ public interface Visitor<S, T> {
 	// statements
 	public T visitStmtSequence(StmtSequence exp, S arg) throws SmplException;
 	public T visitStmtDefinition(StmtDefinition exp, S arg) throws SmplException;
+	public T visitStmtPrint(StmtPrint exp, S arg) throws SmplException;
 	public T visitExpAdd(ExpAdd exp, S arg) throws SmplException;
 	public T visitExpSub(ExpSub exp, S arg) throws SmplException;
 	public T visitExpMul(ExpMul exp, S arg) throws SmplException;
