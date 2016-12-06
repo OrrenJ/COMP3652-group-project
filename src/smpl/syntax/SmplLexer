@@ -66,6 +66,9 @@ hex = [0-9a-f]|[0-9A-F]
 ch = [^\\\n\"]|"\\".|{hex}{4}
 
 //"	// comment stop Java IDE from showing rest of code as if it's inside quotes
+
+comment = (\/\*(.*?)\*\/)|(\/\/(.*?){nl})
+
 %%
 
 <YYINITIAL>	{nl}	{//skip newline, but reset char counter
@@ -73,6 +76,9 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 			}
 <YYINITIAL>	{ws}	{
 			 // skip whitespace
+			}
+<YYINITIAL>	{comment}	{
+			 // skip comment
 			}
 
 <YYINITIAL>	{ws}"+"{ws}	{return new Symbol(sym.PLUS);}

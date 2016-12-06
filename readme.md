@@ -19,6 +19,7 @@ Completed
 * logical operators and, or, not
 * negative expressions
 * { ... }
+* comments
 
 TO DO
 -----
@@ -39,7 +40,6 @@ TO DO
 * multi-valued expression
 * print, println
 * read, readint
-* comments
 
 Optional (with suggested implementation)
 ----------------------------------------
