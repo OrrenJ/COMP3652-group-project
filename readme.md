@@ -9,7 +9,7 @@ Completed
 * integers (positive, negative, hexadecimal (#x), binary(#b))
 * double precision floating point numbers (positive, negative, whole.fraction, whole., .fraction)
 * strings, escape sequences ('\n', '\t', '\\\\', '\"'), string concatenation (+)
-* character literals (#c{char} or #c{4-digit hex unicode})
+* character literals (eg, #ca or #c0061)
 * boolean constants #t and #f
 * pairs
 * built in pair, car, cdr and pair? functions
