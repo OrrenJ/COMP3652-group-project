@@ -38,8 +38,19 @@ x := 5;
 y := #cQ;
 z := -4;
 
-println("x := " + x);
-println("y := " + y);
-println("y := " + z);
+println("x: " + x);
+println("y: " + y);
+println("y: " + z);
 
 println(">>> End of Variables tests <<<\n");
+
+println(">>> Pair tests <<<");
+
+p := pair(x, y);
+
+println("p: " + p);
+println("car(p): " + car(p));
+println("cdr(p): " + cdr(p));
+println("pair(z, p): " + pair(z, p));
+
+println(">>> End of pair tests <<<\n");
