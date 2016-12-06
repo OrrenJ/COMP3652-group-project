@@ -1,0 +1,174 @@
+package smpl.syntax;
+
+import java_cup.runtime.*;
+import java.io.*;
+import java.util.*;
+import smpl.sys.SyntaxSmplException;
+import smpl.values.SmplValue;
+
+/* Preliminaries to set up and use the scanner.  */
+parser code {:
+		SmplLexer lexer;
+
+		public SmplParser(SmplLexer l) {
+		    // As of CUP v0.11, need to pass Lexer to superclass
+		    super(l);
+		    lexer = l;
+		}
+
+		public void report_error(String message, Object info) {
+		    System.err.println(message);
+		}
+
+		public void syntax_error(Symbol cur_token) {
+		    System.err.print("Line " + lexer.getLine() +
+				     " near char " + lexer.getChar() + ": ");
+		    report_error("Syntax error", cur_token);
+		    System.err.println ("Last token read is " + 
+					 lexer.getText());
+		}
+	    :};
+
+init with {:
+    //  This is no longer needed for CUP v0.11
+		// Create a lexer that reads from
+		// supplied input stream or standard input
+		// if (in == null)
+		//    in = System.in;
+		// lexer = new Lexer(in);
+	  :};
+scan with {:
+		try {
+		    return lexer.next_token();
+		} catch (java.io.IOException ioe) {
+		    String msg = "Line " + lexer.getLine() + ", pos " +
+		    	lexer.getColumn() +
+		    	": Unrecognised token <" +
+		    	lexer.getText() + ">";
+		    throw new SyntaxSmplException(msg, ioe);
+		}
+	  :};
+
+/* Terminals (tokens returned by the scanner). */
+
+// special symbols
+terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMI, COMMA, NEG;
+
+// arithmetic operators
+terminal PLUS, MINUS, MUL, DIV, MOD, POW;
+terminal ASSIGN;
+
+// key words
+terminal PAIR, PAIRCHECK, CAR, CDR;
+
+// terminals with values
+terminal Integer INTEGER;
+terminal Double REAL;
+terminal boolean BOOL;
+terminal String CHARACTER;
+terminal String STRING;
+terminal String VARIABLE;
+
+/* Non terminals */
+non terminal SmplProgram program;
+non terminal StmtSequence stmtList;
+non terminal Statement stmt;
+non terminal StmtDefinition definition;
+
+non terminal Exp expression;
+
+non terminal Exp builtIn;
+
+non terminal Exp pair;
+non terminal Exp pairCheck;
+non terminal Exp car;
+non terminal Exp cdr;
+
+non terminal Exp arithExp;
+non terminal Exp term;
+non terminal Exp power;
+non terminal Exp posneg;
+non terminal Exp factor;
+non terminal SmplValue<?> val;
+non terminal SmplValue<?> boolVal;
+non terminal SmplValue<?> strVal;
+
+non terminal empty;
+
+/* Grammar rules */
+
+program ::= stmtList:s {: RESULT = new SmplProgram(s); :};
+
+stmtList ::= stmtList:lst stmt:s {:
+				lst.add(s);
+				RESULT = lst;
+			:} |
+			stmt:s {:
+				RESULT = new StmtSequence(s);
+			:};
+
+stmt ::= definition:d SEMI {: RESULT = d; :} |
+			expression:e SEMI {: RESULT = e; :};
+
+definition ::= VARIABLE:v ASSIGN expression:e {:
+				RESULT = new StmtDefinition(v, e); 
+			:};
+
+expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
+				arithExp:a {: RESULT = a; :} |
+				builtIn:b {: RESULT = b; :};
+
+
+arithExp ::= arithExp:e PLUS term:t {:
+				RESULT = new ExpAdd(e, t); :} |
+			arithExp:e MINUS term:t {:
+				RESULT = new ExpSub(e, t); :} |
+			term:t {: RESULT = t; :};
+
+term ::= term:t MUL power:p {:
+			RESULT = new ExpMul(t, p); :} | 
+		term:t DIV power:p {:
+			RESULT = new ExpDiv(t, p); :} | 
+		term:t MOD power:p {:
+			RESULT = new ExpMod(t, p); :} | 
+		power:p {: RESULT = p; :};
+
+power ::= power:p POW posneg:f {:
+			RESULT = new ExpPow(p, f); :} |
+		posneg:f {: RESULT = f; :};
+
+posneg ::= NEG factor:f {: RESULT = new ExpMul(new ExpLit(-1), f); :} |
+		factor:f {: RESULT  = f; :};
+
+factor ::= val:n {: RESULT = new ExpLit(n); :} |
+		boolVal:bv {: RESULT = new ExpLit(bv); :} |
+		strVal:sv {: RESULT = new ExpLit(sv); :} |
+		VARIABLE:var {: RESULT = new ExpVar(var); :} |
+		LPAREN expression:e RPAREN {: RESULT = e; :}	;
+
+val ::= INTEGER:ilit {: RESULT = SmplValue.make(ilit); :} |
+		REAL: rlit {: RESULT = SmplValue.make(rlit); :};
+
+strVal ::= 	STRING:strlit {: RESULT = SmplValue.makeStrEscaped(strlit); :} | 
+		CHARACTER:chlit {: RESULT = SmplValue.makeChar(chlit); :};
+
+boolVal ::= BOOL:blit {: RESULT = SmplValue.make(blit); :};
+
+builtIn ::= pair:p {: RESULT = p; :} |
+			pairCheck:pc {:RESULT = pc; :} |
+			car:c {: RESULT = c; :} |
+			cdr:c {: RESULT = c; :};
+
+pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
+			RESULT = new ExpPair(e1, e2); :};
+
+pairCheck ::= PAIRCHECK LPAREN expression:e RPAREN {:
+			RESULT = new ExpPairCheck(e); :};
+
+car ::= CAR LPAREN expression:e RPAREN {:
+			RESULT = new ExpCar(e); :};
+
+cdr ::= CDR LPAREN expression:e RPAREN {:
+			RESULT = new ExpCdr(e); :};
+
+empty ::= ;
