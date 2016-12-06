@@ -23,6 +23,9 @@ import smpl.syntax.ExpLt;
 import smpl.syntax.ExpLe;
 import smpl.syntax.ExpGe;
 import smpl.syntax.ExpNeq;
+import smpl.syntax.ExpLogicNot;
+import smpl.syntax.ExpLogicAnd;
+import smpl.syntax.ExpLogicOr;
 import smpl.sys.SmplException;
 import smpl.values.TypeSmplException;
 import smpl.values.SmplValue;
@@ -220,6 +223,28 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		lval = exp.getExpL().visit(this, env);
 		rval = exp.getExpR().visit(this, env);
 		return lval.neq(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpLogicNot(ExpLogicNot exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> val = exp.getExp().visit(this, env);
+		return val.not();
+	}
+
+	@Override
+	public SmplValue<?> visitExpLogicAnd(ExpLogicAnd exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.and(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpLogicOr(ExpLogicOr exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.or(rval);
 	}
 
 }

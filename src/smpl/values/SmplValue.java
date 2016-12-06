@@ -108,6 +108,18 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 		throw new TypeSmplException("Operator not applicable: !=");
 	}
 
+	public SmplValue<?> or(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: or");
+	}
+
+	public SmplValue<?> and(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: and");
+	}
+
+	public SmplValue<?> not() throws SmplException {
+		throw new TypeSmplException("Operator not applicable: not");
+	}
+
 	// return literal values
 
 	public int intValue() throws TypeSmplException {

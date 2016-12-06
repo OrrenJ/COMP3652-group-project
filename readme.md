@@ -1,4 +1,4 @@
-SMPL INTERPRETER
+SMPL Interpreter
 ================
 
 Completed

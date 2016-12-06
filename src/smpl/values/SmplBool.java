@@ -39,6 +39,24 @@ public class SmplBool extends SmplValue<SmplBool> {
 			throw new TypeSmplException(SmplType.BOOLEAN, arg.getType());
 	}
 
+	public SmplValue<?> or(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.BOOLEAN)
+			return make(val || arg.boolValue());
+		else
+			throw new TypeSmplException(SmplType.BOOLEAN, arg.getType());
+	}
+
+	public SmplValue<?> and(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.BOOLEAN)
+			return make(val && arg.boolValue());
+		else
+			throw new TypeSmplException(SmplType.BOOLEAN, arg.getType());
+	}
+
+	public SmplValue<?> not() throws SmplException {
+			return make(!val);
+	}
+
 	// return literal values
 
 	public boolean boolValue() throws TypeSmplException {

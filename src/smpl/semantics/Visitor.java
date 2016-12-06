@@ -22,6 +22,9 @@ import smpl.syntax.ExpLt;
 import smpl.syntax.ExpLe;
 import smpl.syntax.ExpGe;
 import smpl.syntax.ExpNeq;
+import smpl.syntax.ExpLogicNot;
+import smpl.syntax.ExpLogicAnd;
+import smpl.syntax.ExpLogicOr;
 import smpl.sys.SmplException;
 
 public interface Visitor<S, T> {
@@ -50,4 +53,7 @@ public interface Visitor<S, T> {
 	public T visitExpLe(ExpLe exp, S arg) throws SmplException;
 	public T visitExpGe(ExpGe exp, S arg) throws SmplException;
 	public T visitExpNeq(ExpNeq exp, S arg) throws SmplException;
+	public T visitExpLogicNot(ExpLogicNot exp, S arg) throws SmplException;
+	public T visitExpLogicAnd(ExpLogicAnd exp, S arg) throws SmplException;
+	public T visitExpLogicOr(ExpLogicOr exp, S arg) throws SmplException;
 }

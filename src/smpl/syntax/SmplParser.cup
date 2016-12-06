@@ -60,6 +60,9 @@ terminal PLUS, MINUS, MUL, DIV, MOD, POW;
 // relational operators
 terminal EQ, GT, LT, LE, GE, NEQ;
 
+// logical operators
+terminal LNOT, LAND, LOR;
+
 // assignment operator
 terminal ASSIGN;
 
@@ -90,6 +93,9 @@ non terminal Exp car;
 non terminal Exp cdr;
 
 non terminal Exp arithExp;
+non terminal Exp logicOr;
+non terminal Exp logicAnd;
+non terminal Exp logicNot;
 non terminal Exp relation;
 non terminal Exp term;
 non terminal Exp power;
@@ -123,18 +129,30 @@ definition ::= VARIABLE:v ASSIGN expression:e {:
 expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :};
 
-arithExp ::= arithExp:e EQ relation:r {:
-				RESULT = new ExpEq(e, r); :} |
-			arithExp:e GT relation:r {:
-				RESULT = new ExpGt(e, r); :} |
-			arithExp:e LT relation:r {:
-				RESULT = new ExpLt(e, r); :} |
-			arithExp:e LE relation:r {:
-				RESULT = new ExpLe(e, r); :} |
-			arithExp:e GE relation:r {:
-				RESULT = new ExpGe(e, r); :} |
-			arithExp:e NEQ relation:r {:
-				RESULT = new ExpNeq(e, r); :} |
+arithExp ::= arithExp:e LOR logicOr:o {:
+				RESULT = new ExpLogicOr(e, o); :} |
+			logicOr:o {: RESULT = o; :};
+
+logicOr ::= logicOr:o LAND logicAnd:a {:
+				RESULT = new ExpLogicAnd(o, a); :} |
+			logicAnd:a {: RESULT = a; :};
+
+logicAnd ::= LNOT logicNot:n {:
+				RESULT = new ExpLogicNot(n); :} |
+			logicNot:n {: RESULT = n; :};
+
+logicNot ::= logicNot:n EQ relation:r {:
+				RESULT = new ExpEq(n, r); :} |
+			logicNot:n GT relation:r {:
+				RESULT = new ExpGt(n, r); :} |
+			logicNot:n LT relation:r {:
+				RESULT = new ExpLt(n, r); :} |
+			logicNot:n LE relation:r {:
+				RESULT = new ExpLe(n, r); :} |
+			logicNot:n GE relation:r {:
+				RESULT = new ExpGe(n, r); :} |
+			logicNot:n NEQ relation:r {:
+				RESULT = new ExpNeq(n, r); :} |
 			relation:r {: RESULT = r; :};
 
 relation ::= relation:r PLUS term:t {:

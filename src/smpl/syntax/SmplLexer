@@ -77,20 +77,24 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 <YYINITIAL>	{ws}"+"{ws}	{return new Symbol(sym.PLUS);}
 <YYINITIAL>	{ws}"-"{ws}	{return new Symbol(sym.MINUS);}
-<YYINITIAL> "-"		{return new Symbol(sym.NEG);}
+<YYINITIAL> "-"			{return new Symbol(sym.NEG);}
 <YYINITIAL>	{ws}"*"{ws}	{return new Symbol(sym.MUL);}
 <YYINITIAL>	{ws}"/"{ws}	{return new Symbol(sym.DIV);}
 <YYINITIAL>	{ws}"%"{ws}	{return new Symbol(sym.MOD);}
 <YYINITIAL>	{ws}"^"{ws}	{return new Symbol(sym.POW);}
 
-<YYINITIAL> {ws}":="{ws} {return new Symbol(sym.ASSIGN);}
+<YYINITIAL> {ws}":="{ws}	{return new Symbol(sym.ASSIGN);}
 
-<YYINITIAL> {ws}"="{ws} {return new Symbol(sym.EQ);}
-<YYINITIAL> {ws}">"{ws} {return new Symbol(sym.GT);}
-<YYINITIAL> {ws}"<"{ws} {return new Symbol(sym.LT);}
-<YYINITIAL> {ws}"<="{ws} {return new Symbol(sym.LE);}
-<YYINITIAL> {ws}">="{ws} {return new Symbol(sym.GE);}
-<YYINITIAL> {ws}"!="{ws} {return new Symbol(sym.NEQ);}
+<YYINITIAL> {ws}"="{ws} 	{return new Symbol(sym.EQ);}
+<YYINITIAL> {ws}">"{ws} 	{return new Symbol(sym.GT);}
+<YYINITIAL> {ws}"<"{ws} 	{return new Symbol(sym.LT);}
+<YYINITIAL> {ws}"<="{ws} 	{return new Symbol(sym.LE);}
+<YYINITIAL> {ws}">="{ws} 	{return new Symbol(sym.GE);}
+<YYINITIAL> {ws}"!="{ws} 	{return new Symbol(sym.NEQ);}
+
+<YYINITIAL> "not"{ws} 	{return new Symbol(sym.LNOT);}
+<YYINITIAL> {ws}"and"{ws} 	{return new Symbol(sym.LAND);}
+<YYINITIAL> {ws}"or"{ws} 	{return new Symbol(sym.LOR);}
 
 <YYINITIAL>	"{"	{return new Symbol(sym.LBRACE);}
 <YYINITIAL>	"}"	{return new Symbol(sym.RBRACE);}
