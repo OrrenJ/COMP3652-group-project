@@ -34,8 +34,8 @@ TO DO
 * proc, call, lazy, let, def
 * n-valued result
 * assign expression to multiple variables
-* if <expr> then <expr> [else <expr>]
-* case { [p1:c1, ..., pn:cn] } <expr> : <expr>
+* if `expr` then `expr` [else `expr`]
+* case { [p~1~:c~1~, ..., p~n~:c~n~] } `expr` : `expr`
 * multi-valued expression
 * print, println
 * read, readint
