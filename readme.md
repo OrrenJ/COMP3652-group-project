@@ -1,6 +1,13 @@
 SMPL Interpreter
 ================
 
+Example of compile command from src folder on a Linux system
+`javac -cp .:/usr/share/java/cup.jar **/*.java`
+
+Example of run command from src folder on a Linux system
+`java -cp .:/usr/share/java/cup.jar smpl.sys.Repl test.smpl`
+
+
 Completed
 ---------
 
