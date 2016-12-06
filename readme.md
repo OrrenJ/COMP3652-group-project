@@ -16,6 +16,7 @@ Completed
 * assignment operator :=
 * arithmetic operators +, -, *, /, %, ^
 * relational operators =, >, <, <=, >=, !=
+* logical operators and, or, not
 * negative expressions
 * { ... }
 
@@ -27,10 +28,9 @@ TO DO
 * eqv? and equal?
 * substr
 * bitwise operators &, |, ~
-* logical operators and, or, not
 * list concatenation @
 * order of precedence ~ -> *, /, % -> +, - -> &, | -> =, >, <, <=, >=, != -> not -> and -> or
-	* currently ^ -> *, /, % -> +, - -> =, >, <, <=, >=, !=
+	* currently ^ -> *, /, % -> +, - -> =, >, <, <=, >=, != -> not -> and -> or
 * proc, call, lazy, let, def
 * n-valued result
 * assign expression to multiple variables
