@@ -15,6 +15,7 @@ Completed
 * built in pair, car, cdr and pair? functions
 * assignment operator :=
 * arithmetic operators +, -, *, /, %, ^
+* relational operators =, >, <, <=, >=, !=
 * negative expressions
 * { ... }
 
@@ -26,11 +27,10 @@ TO DO
 * eqv? and equal?
 * substr
 * bitwise operators &, |, ~
-* relational operators =, >, <, <=, >=, !=
 * logical operators and, or, not
 * list concatenation @
 * order of precedence ~ -> *, /, % -> +, - -> &, | -> =, >, <, <=, >=, != -> not -> and -> or
-	* currently ^ -> *, /, % -> +, -
+	* currently ^ -> *, /, % -> +, - -> =, >, <, <=, >=, !=
 * proc, call, lazy, let, def
 * n-valued result
 * assign expression to multiple variables

@@ -1,5 +1,8 @@
 package smpl.values;
 
+import smpl.sys.SmplException;
+import static smpl.values.SmplValue.make;
+
 public class SmplPair extends SmplValue<SmplPair> {
 
 	SmplValue<?> val1, val2;
@@ -20,6 +23,27 @@ public class SmplPair extends SmplValue<SmplPair> {
 
 	public SmplValue<?> getSecondValue(){
 		return val2;
+	}
+
+	// check if pairs have equivalent values
+	public SmplValue<?> eq(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.PAIR){
+			boolean eq = getFirstValue().eq(((SmplPair)arg).getFirstValue()).boolValue() && 
+			getSecondValue().eq(((SmplPair)arg).getSecondValue()).boolValue();
+			return make(eq);
+		} else {
+			throw new TypeSmplException(SmplType.PAIR, arg.getType());
+		}
+	}
+
+	public SmplValue<?> neq(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.PAIR){
+			boolean neq = getFirstValue().neq(((SmplPair)arg).getFirstValue()).boolValue() || 
+			getSecondValue().neq(((SmplPair)arg).getSecondValue()).boolValue();
+			return make(neq);
+		} else {
+			throw new TypeSmplException(SmplType.PAIR, arg.getType());
+		}
 	}
 
 	@Override

@@ -71,6 +71,65 @@ public class SmplInt extends SmplValue<SmplInt> {
 			return make( Math.pow( val, arg.doubleValue() ) );
 	}
 
+	public SmplValue<?> eq(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val == arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
+
+	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val > arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
+
+	public SmplValue<?> lt(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val < arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
+
+	public SmplValue<?> le(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val <= arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
+
+	public SmplValue<?> ge(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val >= arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
+
+	public SmplValue<?> neq(SmplValue<?> arg) throws SmplException {
+		SmplType type = arg.getType();
+		if(type == SmplType.INTEGER ||
+			type == SmplType.CHARACTER ||
+			type == SmplType.REAL)
+			return make(val != arg.intValue());
+		else
+			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+	}
 
 	// return literal values
 

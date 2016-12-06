@@ -29,6 +29,6 @@ public class StmtDefinition extends Statement {
 
 	@Override
 	public String toString() {
-		return String.format("%s = %s", var, exp.toString());
+		return String.format("%s := %s", var, exp.toString());
 	}
 }

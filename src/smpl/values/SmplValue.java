@@ -84,6 +84,29 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 		throw new TypeSmplException("Cannot rise powers of non-numeric values");
 	}
 
+	public SmplValue<?> eq(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: =");
+	}
+
+	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: >");
+	}
+
+	public SmplValue<?> lt(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: <");
+	}
+
+	public SmplValue<?> le(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: <=");
+	}
+
+	public SmplValue<?> ge(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: >=");
+	}
+
+	public SmplValue<?> neq(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: !=");
+	}
 
 	// return literal values
 

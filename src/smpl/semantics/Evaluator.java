@@ -17,6 +17,12 @@ import smpl.syntax.ExpPair;
 import smpl.syntax.ExpPairCheck;
 import smpl.syntax.ExpCar;
 import smpl.syntax.ExpCdr;
+import smpl.syntax.ExpEq;
+import smpl.syntax.ExpGt;
+import smpl.syntax.ExpLt;
+import smpl.syntax.ExpLe;
+import smpl.syntax.ExpGe;
+import smpl.syntax.ExpNeq;
 import smpl.sys.SmplException;
 import smpl.values.TypeSmplException;
 import smpl.values.SmplValue;
@@ -166,6 +172,54 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			return ((SmplPair)val).getSecondValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
+	}
+
+	@Override
+	public SmplValue<?> visitExpEq(ExpEq exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.eq(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpGt(ExpGt exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.gt(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpLt(ExpLt exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.lt(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpLe(ExpLe exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.le(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpGe(ExpGe exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.ge(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpNeq(ExpNeq exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.neq(rval);
 	}
 
 }

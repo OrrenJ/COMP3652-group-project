@@ -56,6 +56,11 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMI, COMMA, NEG;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
+
+// relational operators
+terminal EQ, GT, LT, LE, GE, NEQ;
+
+// assignment operator
 terminal ASSIGN;
 
 // key words
@@ -85,6 +90,7 @@ non terminal Exp car;
 non terminal Exp cdr;
 
 non terminal Exp arithExp;
+non terminal Exp relation;
 non terminal Exp term;
 non terminal Exp power;
 non terminal Exp posneg;
@@ -115,14 +121,26 @@ definition ::= VARIABLE:v ASSIGN expression:e {:
 			:};
 
 expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
-				arithExp:a {: RESULT = a; :} |
-				builtIn:b {: RESULT = b; :};
+				arithExp:a {: RESULT = a; :};
 
+arithExp ::= arithExp:e EQ relation:r {:
+				RESULT = new ExpEq(e, r); :} |
+			arithExp:e GT relation:r {:
+				RESULT = new ExpGt(e, r); :} |
+			arithExp:e LT relation:r {:
+				RESULT = new ExpLt(e, r); :} |
+			arithExp:e LE relation:r {:
+				RESULT = new ExpLe(e, r); :} |
+			arithExp:e GE relation:r {:
+				RESULT = new ExpGe(e, r); :} |
+			arithExp:e NEQ relation:r {:
+				RESULT = new ExpNeq(e, r); :} |
+			relation:r {: RESULT = r; :};
 
-arithExp ::= arithExp:e PLUS term:t {:
-				RESULT = new ExpAdd(e, t); :} |
-			arithExp:e MINUS term:t {:
-				RESULT = new ExpSub(e, t); :} |
+relation ::= relation:r PLUS term:t {:
+				RESULT = new ExpAdd(r, t); :} |
+			relation:r MINUS term:t {:
+				RESULT = new ExpSub(r, t); :} |
 			term:t {: RESULT = t; :};
 
 term ::= term:t MUL power:p {:
@@ -138,11 +156,13 @@ power ::= power:p POW posneg:f {:
 		posneg:f {: RESULT = f; :};
 
 posneg ::= NEG factor:f {: RESULT = new ExpMul(new ExpLit(-1), f); :} |
+		MINUS factor:f {: RESULT = new ExpMul(new ExpLit(-1), f); :} |
 		factor:f {: RESULT  = f; :};
 
 factor ::= val:n {: RESULT = new ExpLit(n); :} |
 		boolVal:bv {: RESULT = new ExpLit(bv); :} |
 		strVal:sv {: RESULT = new ExpLit(sv); :} |
+		builtIn:b {: RESULT = b; :} |
 		VARIABLE:var {: RESULT = new ExpVar(var); :} |
 		LPAREN expression:e RPAREN {: RESULT = e; :}	;
 

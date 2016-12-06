@@ -16,6 +16,12 @@ import smpl.syntax.ExpPair;
 import smpl.syntax.ExpPairCheck;
 import smpl.syntax.ExpCar;
 import smpl.syntax.ExpCdr;
+import smpl.syntax.ExpEq;
+import smpl.syntax.ExpGt;
+import smpl.syntax.ExpLt;
+import smpl.syntax.ExpLe;
+import smpl.syntax.ExpGe;
+import smpl.syntax.ExpNeq;
 import smpl.sys.SmplException;
 
 public interface Visitor<S, T> {
@@ -38,4 +44,10 @@ public interface Visitor<S, T> {
 	public T visitExpPairCheck(ExpPairCheck exp, S arg) throws SmplException;
 	public T visitExpCar(ExpCar exp, S arg) throws SmplException;
 	public T visitExpCdr(ExpCdr exp, S arg) throws SmplException;
+	public T visitExpEq(ExpEq exp, S arg) throws SmplException;
+	public T visitExpGt(ExpGt exp, S arg) throws SmplException;
+	public T visitExpLt(ExpLt exp, S arg) throws SmplException;
+	public T visitExpLe(ExpLe exp, S arg) throws SmplException;
+	public T visitExpGe(ExpGe exp, S arg) throws SmplException;
+	public T visitExpNeq(ExpNeq exp, S arg) throws SmplException;
 }

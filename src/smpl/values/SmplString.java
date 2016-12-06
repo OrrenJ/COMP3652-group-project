@@ -1,6 +1,7 @@
 package smpl.values;
 
 import smpl.sys.SmplException;
+import static smpl.values.SmplValue.make;
 import static smpl.values.SmplValue.makeStr;
 
 public class SmplString extends SmplValue<SmplString> {
@@ -49,6 +50,48 @@ public class SmplString extends SmplValue<SmplString> {
 	@Override
 	public SmplValue<?> add(SmplValue<?> arg) throws SmplException {
 		return makeStr(val + arg.stringValue());
+	}
+
+	public SmplValue<?> eq(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) == 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
+	}
+
+	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) > 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
+	}
+
+	public SmplValue<?> lt(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) < 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
+	}
+
+	public SmplValue<?> le(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) <= 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
+	}
+
+	public SmplValue<?> ge(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) >= 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
+	}
+
+	public SmplValue<?> neq(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.STRING)
+			return make(val.compareTo(arg.stringValue()) != 0);
+		else
+			throw new TypeSmplException(SmplType.STRING, arg.getType());
 	}
 
 	// return literal values
