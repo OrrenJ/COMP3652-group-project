@@ -1,8 +1,6 @@
-================
 SMPL INTERPRETER
 ================
 
----------
 Completed
 ---------
 
@@ -20,7 +18,6 @@ Completed
 * negative expressions
 * { ... }
 
------
 TO DO
 -----
 
@@ -44,7 +41,6 @@ TO DO
 * read, readint
 * comments
 
-----------------------------------------
 Optional (with suggested implementation)
 ----------------------------------------
 
@@ -53,7 +49,6 @@ Optional (with suggested implementation)
 * reference parameters (as opposed to call by value)
 * graphics
 
--------------------------------------------
 Optional (without suggested implementation)
 -------------------------------------------
 
