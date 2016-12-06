@@ -57,6 +57,9 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMI, COMMA, NEG;
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
 
+// bitwise opertors
+terminal BAND, BOR, BNOT;
+
 // relational operators
 terminal EQ, GT, LT, LE, GE, NEQ;
 
@@ -93,11 +96,13 @@ non terminal Exp car;
 non terminal Exp cdr;
 
 non terminal Exp arithExp;
-non terminal Exp logicOr;
 non terminal Exp logicAnd;
 non terminal Exp logicNot;
 non terminal Exp relation;
+non terminal Exp bitandor;
+non terminal Exp count;
 non terminal Exp term;
+non terminal Exp bitnot;
 non terminal Exp power;
 non terminal Exp posneg;
 non terminal Exp factor;
@@ -129,44 +134,53 @@ definition ::= VARIABLE:v ASSIGN expression:e {:
 expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :};
 
-arithExp ::= arithExp:e LOR logicOr:o {:
-				RESULT = new ExpLogicOr(e, o); :} |
-			logicOr:o {: RESULT = o; :};
-
-logicOr ::= logicOr:o LAND logicAnd:a {:
-				RESULT = new ExpLogicAnd(o, a); :} |
+arithExp ::= arithExp:e LOR logicAnd:a {:
+				RESULT = new ExpLogicOr(e, a); :} |
 			logicAnd:a {: RESULT = a; :};
 
-logicAnd ::= LNOT logicNot:n {:
-				RESULT = new ExpLogicNot(n); :} |
+logicAnd ::= logicAnd:a LAND logicNot:n {:
+				RESULT = new ExpLogicAnd(a, n); :} |
 			logicNot:n {: RESULT = n; :};
 
-logicNot ::= logicNot:n EQ relation:r {:
-				RESULT = new ExpEq(n, r); :} |
-			logicNot:n GT relation:r {:
-				RESULT = new ExpGt(n, r); :} |
-			logicNot:n LT relation:r {:
-				RESULT = new ExpLt(n, r); :} |
-			logicNot:n LE relation:r {:
-				RESULT = new ExpLe(n, r); :} |
-			logicNot:n GE relation:r {:
-				RESULT = new ExpGe(n, r); :} |
-			logicNot:n NEQ relation:r {:
-				RESULT = new ExpNeq(n, r); :} |
+logicNot ::= LNOT relation:r {:
+				RESULT = new ExpLogicNot(r); :} |
 			relation:r {: RESULT = r; :};
 
-relation ::= relation:r PLUS term:t {:
-				RESULT = new ExpAdd(r, t); :} |
-			relation:r MINUS term:t {:
-				RESULT = new ExpSub(r, t); :} |
+relation ::= relation:r EQ bitandor:ao {:
+				RESULT = new ExpEq(r, ao); :} |
+			relation:r GT bitandor:ao {:
+				RESULT = new ExpGt(r, ao); :} |
+			relation:r LT bitandor:ao {:
+				RESULT = new ExpLt(r, ao); :} |
+			relation:r LE bitandor:ao {:
+				RESULT = new ExpLe(r, ao); :} |
+			relation:r GE bitandor:ao {:
+				RESULT = new ExpGe(r, ao); :} |
+			relation:r NEQ bitandor:ao {:
+				RESULT = new ExpNeq(r, ao); :} |
+			bitandor:ao {: RESULT = ao; :};
+
+bitandor ::= bitandor:ao BAND count:c {:
+				RESULT = new ExpBitWiseAnd(ao, c); :} |
+			bitandor:ao BOR count:c {:
+				RESULT = new ExpBitWiseOr(ao, c); :} |
+			count:c {: RESULT = c; :};
+
+count ::= count:c PLUS term:t {:
+				RESULT = new ExpAdd(c, t); :} |
+			count:c MINUS term:t {:
+				RESULT = new ExpSub(c, t); :} |
 			term:t {: RESULT = t; :};
 
-term ::= term:t MUL power:p {:
-			RESULT = new ExpMul(t, p); :} | 
-		term:t DIV power:p {:
-			RESULT = new ExpDiv(t, p); :} | 
-		term:t MOD power:p {:
-			RESULT = new ExpMod(t, p); :} | 
+term ::= term:t MUL bitnot:b {:
+			RESULT = new ExpMul(t, b); :} | 
+		term:t DIV bitnot:b {:
+			RESULT = new ExpDiv(t, b); :} | 
+		term:t MOD bitnot:b {:
+			RESULT = new ExpMod(t, b); :} | 
+		bitnot:b {: RESULT = b; :};
+
+bitnot ::= BNOT power:p {: new ExpBitWiseNot(p); :} |
 		power:p {: RESULT = p; :};
 
 power ::= power:p POW posneg:f {:

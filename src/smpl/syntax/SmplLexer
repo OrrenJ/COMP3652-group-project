@@ -91,6 +91,10 @@ comment = (\/\*(.*?)\*\/)|(\/\/(.*?){nl})
 
 <YYINITIAL> {ws}":="{ws}	{return new Symbol(sym.ASSIGN);}
 
+<YYINITIAL> {ws}"&"{ws}	{return new Symbol(sym.BAND);}
+<YYINITIAL> {ws}"|"{ws}	{return new Symbol(sym.BOR);}
+<YYINITIAL> "~"	{return new Symbol(sym.BNOT);}
+	
 <YYINITIAL> {ws}"="{ws} 	{return new Symbol(sym.EQ);}
 <YYINITIAL> {ws}">"{ws} 	{return new Symbol(sym.GT);}
 <YYINITIAL> {ws}"<"{ws} 	{return new Symbol(sym.LT);}

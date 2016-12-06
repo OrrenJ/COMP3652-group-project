@@ -25,6 +25,9 @@ import smpl.syntax.ExpNeq;
 import smpl.syntax.ExpLogicNot;
 import smpl.syntax.ExpLogicAnd;
 import smpl.syntax.ExpLogicOr;
+import smpl.syntax.ExpBitWiseNot;
+import smpl.syntax.ExpBitWiseAnd;
+import smpl.syntax.ExpBitWiseOr;
 import smpl.sys.SmplException;
 
 public interface Visitor<S, T> {
@@ -56,4 +59,7 @@ public interface Visitor<S, T> {
 	public T visitExpLogicNot(ExpLogicNot exp, S arg) throws SmplException;
 	public T visitExpLogicAnd(ExpLogicAnd exp, S arg) throws SmplException;
 	public T visitExpLogicOr(ExpLogicOr exp, S arg) throws SmplException;
+	public T visitExpBitWiseNot(ExpBitWiseNot exp, S arg) throws SmplException;
+	public T visitExpBitWiseAnd(ExpBitWiseAnd exp, S arg) throws SmplException;
+	public T visitExpBitWiseOr(ExpBitWiseOr exp, S arg) throws SmplException;
 }

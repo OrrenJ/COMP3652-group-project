@@ -120,6 +120,18 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 		throw new TypeSmplException("Operator not applicable: not");
 	}
 
+	public SmplValue<?> bitnot() throws SmplException {
+		throw new TypeSmplException("Operator not applicable: ~");
+	}
+
+	public SmplValue<?> bitor(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: |");
+	}
+
+	public SmplValue<?> bitand(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Operator not applicable: &");
+	}
+
 	// return literal values
 
 	public int intValue() throws TypeSmplException {

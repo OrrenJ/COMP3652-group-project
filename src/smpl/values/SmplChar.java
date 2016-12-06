@@ -90,6 +90,27 @@ public class SmplChar extends SmplValue<SmplChar> {
 			throw new TypeSmplException(SmplType.CHARACTER, arg.getType());
 	}
 
+	public SmplValue<?> bitnot() throws SmplException {
+		return make(~val);
+	}
+
+	public SmplValue<?> bitor(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.INTEGER ||
+			arg.getType() == SmplType.CHARACTER)
+			return make(val | arg.charValue());
+		else
+			throw new TypeSmplException(SmplType.CHARACTER, arg.getType());
+	}
+
+	public SmplValue<?> bitand(SmplValue<?> arg) throws SmplException {
+		if(arg.getType() == SmplType.INTEGER ||
+			arg.getType() == SmplType.CHARACTER)
+			return make(val & arg.charValue());
+		else
+			throw new TypeSmplException(SmplType.CHARACTER, arg.getType());
+	}
+
+
 	// return literal values
 
 	public int intValue() throws TypeSmplException {

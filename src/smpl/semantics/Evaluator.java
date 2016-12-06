@@ -26,6 +26,9 @@ import smpl.syntax.ExpNeq;
 import smpl.syntax.ExpLogicNot;
 import smpl.syntax.ExpLogicAnd;
 import smpl.syntax.ExpLogicOr;
+import smpl.syntax.ExpBitWiseNot;
+import smpl.syntax.ExpBitWiseAnd;
+import smpl.syntax.ExpBitWiseOr;
 import smpl.sys.SmplException;
 import smpl.values.TypeSmplException;
 import smpl.values.SmplValue;
@@ -245,6 +248,28 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		lval = exp.getExpL().visit(this, env);
 		rval = exp.getExpR().visit(this, env);
 		return lval.or(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpBitWiseNot(ExpBitWiseNot exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> val = exp.getExp().visit(this, env);
+		return val.bitnot();
+	}
+
+	@Override
+	public SmplValue<?> visitExpBitWiseAnd(ExpBitWiseAnd exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.bitand(rval);
+	}
+
+	@Override
+	public SmplValue<?> visitExpBitWiseOr(ExpBitWiseOr exp, Environment<SmplValue<?>> env) throws SmplException {
+		SmplValue<?> lval, rval;
+		lval = exp.getExpL().visit(this, env);
+		rval = exp.getExpR().visit(this, env);
+		return lval.bitor(rval);
 	}
 
 }
