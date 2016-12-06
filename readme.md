@@ -4,6 +4,7 @@ SMPL Interpreter
 Completed
 ---------
 
+* take name of file to interpret as argument
 * binary operators require white space on both sides (more to be implemnted)
 * + and - are allowed in variable names (perhaps other bitwise opertors should be allowed too?)
 * integers (positive, negative, hexadecimal (#x), binary(#b))

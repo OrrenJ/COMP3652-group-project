@@ -1,0 +1,4 @@
+// arithmetic tests
+x := 17.25;
+y := x * 3 / 4;
+p := pair(x ^ 2, -y);

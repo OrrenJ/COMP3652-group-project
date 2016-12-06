@@ -17,7 +17,11 @@ public class Repl {
     public static final String PROMPT = "SMPL>";
 
     public static void main(String args[]) {
-		repl(new Environment());
+    	if (args.length == 0){
+			repl(new Environment());
+    	} else {
+    		repl(new Environment(), args[0]);
+    	}
     }
 
     public static void repl(Environment env) {
@@ -25,6 +29,16 @@ public class Repl {
 		while (true) {
 		    parseEvalShow(reader, env);
 		}
+    }
+
+    public static void repl(Environment env, String filename){
+    	try {
+    		File file = new File(filename);
+    		FileReader reader = new FileReader(file);
+    		parseEvalShow(reader, env);
+    	} catch(FileNotFoundException e) {
+    		System.out.println("Could not find " + filename);
+    	}
     }
 
     public static void parseEvalShow(Reader reader, Environment env) {
