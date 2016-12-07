@@ -79,12 +79,12 @@ println(">>> List tests <<<");
 
 l1 := list(x, y, z, b);
 l2 := list(b, z, y, x);
-q := l1;
+q := [x, y, z, b];
 
 println("l1: " + l1);
 println("l2: " + l2);
 println("q: " + q);
 println("l1 = l2: " + (l1 = l2));
-println("l1 = lq: " + (l1 = q));
+println("l1 = q: " + (l1 = q));
 
 println(">>> End of List tests <<<\n");

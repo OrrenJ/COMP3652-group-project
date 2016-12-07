@@ -52,7 +52,7 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 
 // special symbols
-terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMI, COMMA, NEG;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
@@ -252,7 +252,9 @@ argsAux ::= COMMA expression:e argsAux:al {:
 		:};
 
 list ::= LIST LPAREN args:a RPAREN {:
-		RESULT = new ExpList(a); :} |
+			RESULT = new ExpList(a); :} |
+		LBRACKET args:a RBRACKET {:
+			RESULT = new ExpList(a); :} |
 		EMPTYLIST {: RESULT = new ExpList(); :};
 
 empty ::= ;

@@ -36,12 +36,11 @@ Completed
 * comments
 * `print`, `println`
 * lists
-* `list` function
+* `list` function and square bracket notation
 
 TO DO
 -----
 
-* built in list functions
 * vectors and built in vector functions
 * `eqv?` and `equal?`
 * `substr`
