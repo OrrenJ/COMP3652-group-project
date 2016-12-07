@@ -43,12 +43,18 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitStmtDefinition(StmtDefinition sd, Environment<SmplValue<?>> env) throws SmplException{
-		result = sd.getExp().visit(this, env);
+		ArrayList<Exp> args = sd.getExps();
 		ArrayList<String> vars = sd.getVars();
 
-		for(String v : vars)
-			env.put(v, result);
-		
+		int a_size = args.size();
+		int v_size = vars.size();
+
+		if(a_size != v_size)
+			throw new SmplException("Must assign same number of expressions as variables");
+
+		for(int i=0; i<a_size; i++)
+			env.put(vars.get(i), args.get(i).visit(this, env));
+
 		return result;
 	}
 

@@ -57,7 +57,7 @@ y := #cQ;
 z := -4;
 b := #t;
 
-f, g, h, i := "multi";
+f, g, h, i := "here", "are", "four", "strings";
 
 println("x: " + x);
 println("y: " + y);

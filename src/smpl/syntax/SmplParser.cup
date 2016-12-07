@@ -144,8 +144,8 @@ stmt ::= definition:d SEMI {: RESULT = d; :} |
 			print:p SEMI {: RESULT = p; :} |
 			expression:e SEMI {: RESULT = e; :};
 
-definition ::= params:p ASSIGN expression:e {:
-				RESULT = new StmtDefinition(p, e); 
+definition ::= params:p ASSIGN args:a {:
+				RESULT = new StmtDefinition(p, a); 
 			:};
 
 print ::= PRINT LPAREN expression:e RPAREN {:

@@ -8,19 +8,19 @@ import java.util.*;
 public class StmtDefinition extends Statement {
 
 	ArrayList<String> vars;
-	Exp exp;
+	ArrayList<Exp> exps;
 
-	public StmtDefinition(ArrayList<String> ids, Exp e) {
+	public StmtDefinition(ArrayList<String> ids, ArrayList<Exp> e) {
 		vars = ids;
-		exp = e;
+		exps = e;
 	}
 
 	public ArrayList<String> getVars(){
 		return vars;
 	}
 
-	public Exp getExp(){
-		return exp;
+	public ArrayList<Exp> getExps(){
+		return exps;
 	}
 
 	@Override
@@ -30,6 +30,6 @@ public class StmtDefinition extends Statement {
 
 	@Override
 	public String toString() {
-		return String.format("%s := %s", vars, exp.toString());
+		return String.format("%s := %s", vars, exps.toString());
 	}
 }

@@ -38,6 +38,7 @@ Completed
 * lists
 * `list` function and square bracket notation
 * `let`, `proc`
+* n-valued result
 * assign expression to multiple variables
 
 TO DO
@@ -48,10 +49,8 @@ TO DO
 * `substr`
 * list concatenation `@`
 * `call`, `lazy`, `def`
-* n-valued result
 * `if <expr> then <expr> [else <expr>]`
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
-* multi-valued expression
 * `read`, `readint`
 
 Optional (with suggested implementation)
