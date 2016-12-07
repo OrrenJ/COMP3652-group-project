@@ -49,6 +49,28 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	}
 
 	@Override
+	public SmplValue<?> visitStmtLet(StmtLet let, Environment<SmplValue<?>> env) throws SmplException{
+		ArrayList<Binding> bindings = let.getBindings();
+		Exp body = let.getBody();
+
+		int size = bindings.size();
+		String[] vars = new String[size];
+		SmplValue<?>[] vals = new SmplValue<?>[size];
+		Binding b;
+
+		for (int i = 0; i < size; i++) {
+		    b = bindings.get(i);
+		    vars[i] = b.getVar();
+		    // evaluate each expression in bindings
+		    result = b.getValExp().visit(this, env);
+		    vals[i] = result;
+		}
+		// create new env as child of current
+		Environment<SmplValue<?>> newEnv = new Environment<> (vars, vals, env);
+		return body.visit(this, newEnv);
+	}
+
+	@Override
 	public SmplValue<?> visitStmtPrint(StmtPrint sp, Environment<SmplValue<?>> env) throws SmplException{
 		result = sp.getExp().visit(this, env);
 		System.out.print(result.toString() + sp.getTerminatingCharacter());

@@ -37,6 +37,7 @@ Completed
 * `print`, `println`
 * lists
 * `list` function and square bracket notation
+* `let`
 
 TO DO
 -----
@@ -45,7 +46,7 @@ TO DO
 * `eqv?` and `equal?`
 * `substr`
 * list concatenation `@`
-* `proc`, `call`, `lazy`, `let`, `def`
+* `proc`, `call`, `lazy`, `def`
 * n-valued result
 * assign expression to multiple variables
 * `if <expr> then <expr> [else <expr>]`

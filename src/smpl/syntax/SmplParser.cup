@@ -70,7 +70,7 @@ terminal LNOT, LAND, LOR;
 terminal ASSIGN;
 
 // key words
-terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST;
+terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, LET, IN;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -88,6 +88,11 @@ non terminal StmtDefinition definition;
 non terminal StmtPrint print;
 
 non terminal Exp expression;
+
+non terminal StmtLet letStmt;
+non terminal ArrayList<Binding> bindings;
+non terminal ArrayList<Binding> bindingsAux;
+non terminal Binding binding;
 
 non terminal Exp builtIn;
 
@@ -144,8 +149,29 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 				RESULT = new StmtPrint(e, '\n'); 
 			:};
 
-expression ::= LBRACE stmtList:body RBRACE {: RESULT = body; :} |
+expression ::= letStmt:l {: RESULT = l; :} |
+				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :};
+
+letStmt ::= LET bindings:bs IN expression:body {:
+				RESULT = new StmtLet(bs, body);
+			:};
+
+binding ::= VARIABLE:v EQ expression:e {:
+				RESULT = new Binding(v, e);
+			:};
+
+bindings ::= binding:b bindingsAux:bl {:
+				bl.add(0,b);
+				RESULT = bl;
+				:} |
+			empty {: RESULT = new ArrayList(); :};
+
+bindingsAux ::= COMMA binding:b bindingsAux:bl {:
+				bl.add(0,b);
+				RESULT = bl;
+				:} |
+			empty {: RESULT = new ArrayList(); :};
 
 arithExp ::= arithExp:e LOR logicAnd:a {:
 				RESULT = new ExpLogicOr(e, a); :} |

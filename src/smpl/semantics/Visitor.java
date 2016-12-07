@@ -11,6 +11,7 @@ public interface Visitor<S, T> {
 	// statements
 	public T visitStmtSequence(StmtSequence exp, S arg) throws SmplException;
 	public T visitStmtDefinition(StmtDefinition exp, S arg) throws SmplException;
+	public T visitStmtLet(StmtLet exp, S arg) throws SmplException;
 	public T visitStmtPrint(StmtPrint exp, S arg) throws SmplException;
 	public T visitExpAdd(ExpAdd exp, S arg) throws SmplException;
 	public T visitExpSub(ExpSub exp, S arg) throws SmplException;
