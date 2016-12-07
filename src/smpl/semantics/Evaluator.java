@@ -44,7 +44,11 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitStmtDefinition(StmtDefinition sd, Environment<SmplValue<?>> env) throws SmplException{
 		result = sd.getExp().visit(this, env);
-		env.put(sd.getVar(), result);
+		ArrayList<String> vars = sd.getVars();
+
+		for(String v : vars)
+			env.put(v, result);
+		
 		return result;
 	}
 

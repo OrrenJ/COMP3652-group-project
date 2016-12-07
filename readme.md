@@ -38,6 +38,7 @@ Completed
 * lists
 * `list` function and square bracket notation
 * `let`, `proc`
+* assign expression to multiple variables
 
 TO DO
 -----
@@ -48,7 +49,6 @@ TO DO
 * list concatenation `@`
 * `call`, `lazy`, `def`
 * n-valued result
-* assign expression to multiple variables
 * `if <expr> then <expr> [else <expr>]`
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
 * multi-valued expression

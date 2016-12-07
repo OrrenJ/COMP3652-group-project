@@ -3,19 +3,20 @@ package smpl.syntax;
 import smpl.semantics.Visitor;
 import smpl.syntax.Exp;
 import smpl.sys.SmplException;
+import java.util.*;
 
 public class StmtDefinition extends Statement {
 
-	String var;
+	ArrayList<String> vars;
 	Exp exp;
 
-	public StmtDefinition(String id, Exp e) {
-		var = id;
+	public StmtDefinition(ArrayList<String> ids, Exp e) {
+		vars = ids;
 		exp = e;
 	}
 
-	public String getVar(){
-		return var;
+	public ArrayList<String> getVars(){
+		return vars;
 	}
 
 	public Exp getExp(){
@@ -29,6 +30,6 @@ public class StmtDefinition extends Statement {
 
 	@Override
 	public String toString() {
-		return String.format("%s := %s", var, exp.toString());
+		return String.format("%s := %s", vars, exp.toString());
 	}
 }

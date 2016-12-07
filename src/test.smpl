@@ -57,10 +57,16 @@ y := #cQ;
 z := -4;
 b := #t;
 
+f, g, h, i := "multi";
+
 println("x: " + x);
 println("y: " + y);
 println("z: " + z);
 println("b: " + b);
+println("f: " + f);
+println("g: " + g);
+println("h: " + h);
+println("i: " + i);
 
 println(">>> End of Variables tests <<<\n");
 
