@@ -32,7 +32,7 @@ public class SmplPair extends SmplValue<SmplPair> {
 			getSecondValue().eq(((SmplPair)arg).getSecondValue()).boolValue();
 			return make(eq);
 		} else {
-			throw new TypeSmplException(SmplType.PAIR, arg.getType());
+			return make(false);
 		}
 	}
 
@@ -42,7 +42,7 @@ public class SmplPair extends SmplValue<SmplPair> {
 			getSecondValue().neq(((SmplPair)arg).getSecondValue()).boolValue();
 			return make(neq);
 		} else {
-			throw new TypeSmplException(SmplType.PAIR, arg.getType());
+			return make(true);
 		}
 	}
 

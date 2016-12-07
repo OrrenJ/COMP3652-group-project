@@ -5,6 +5,7 @@
 package smpl.values;
 
 import smpl.sys.SmplException;
+import java.util.*;
 
 public abstract class SmplValue<T extends SmplValue<T>> {
 
@@ -51,6 +52,16 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 
 	public static SmplString makeStrEscaped(String v){
 		return new SmplString(SmplString.escape(v));
+	}
+
+	public static SmplList makeList(ArrayList<SmplValue<?>> v){
+
+		if(v.size() > 0){
+			return new SmplList(v.remove(v.size()-1), makeList(v));
+		} else {
+			return new SmplEmptyList();
+		}
+
 	}
 
 	// return the type of a value

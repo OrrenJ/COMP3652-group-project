@@ -74,3 +74,17 @@ println("cdr(p): " + cdr(p));
 println("pair(z, p): " + pair(z, p));
 
 println(">>> End of pair tests <<<\n");
+
+println(">>> List tests <<<");
+
+l1 := list(x, y, z, b);
+l2 := list(b, z, y, x);
+q := l1;
+
+println("l1: " + l1);
+println("l2: " + l2);
+println("q: " + q);
+println("l1 = l2: " + (l1 = l2));
+println("l1 = lq: " + (l1 = q));
+
+println(">>> End of List tests <<<\n");

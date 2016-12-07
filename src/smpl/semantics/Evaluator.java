@@ -1,43 +1,8 @@
 package smpl.semantics;
 
-import smpl.syntax.SmplProgram;
-import smpl.syntax.StmtSequence;
-import smpl.syntax.Statement;
-import smpl.syntax.StmtDefinition;
-import smpl.syntax.StmtPrint;
-import smpl.syntax.Exp;
-import smpl.syntax.ExpLit;
-import smpl.syntax.ExpVar;
-import smpl.syntax.ExpAdd;
-import smpl.syntax.ExpSub;
-import smpl.syntax.ExpMul;
-import smpl.syntax.ExpDiv;
-import smpl.syntax.ExpMod;
-import smpl.syntax.ExpPow;
-import smpl.syntax.ExpPair;
-import smpl.syntax.ExpPairCheck;
-import smpl.syntax.ExpCar;
-import smpl.syntax.ExpCdr;
-import smpl.syntax.ExpEq;
-import smpl.syntax.ExpGt;
-import smpl.syntax.ExpLt;
-import smpl.syntax.ExpLe;
-import smpl.syntax.ExpGe;
-import smpl.syntax.ExpNeq;
-import smpl.syntax.ExpLogicNot;
-import smpl.syntax.ExpLogicAnd;
-import smpl.syntax.ExpLogicOr;
-import smpl.syntax.ExpBitWiseNot;
-import smpl.syntax.ExpBitWiseAnd;
-import smpl.syntax.ExpBitWiseOr;
+import smpl.syntax.*;
 import smpl.sys.SmplException;
-import smpl.values.TypeSmplException;
-import smpl.values.SmplValue;
-import smpl.values.SmplInt;
-import smpl.values.SmplType;
-import smpl.values.SmplReal;
-import smpl.values.SmplPair;
-import smpl.values.SmplBool;
+import smpl.values.*;
 import java.util.*;
 
 public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?>> {
@@ -85,7 +50,6 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitStmtPrint(StmtPrint sp, Environment<SmplValue<?>> env) throws SmplException{
-		//System.out.println(sp.getExp());
 		result = sp.getExp().visit(this, env);
 		System.out.print(result.toString() + sp.getTerminatingCharacter());
 		return result;
@@ -154,6 +118,20 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		SmplValue<?> v1 = exp.getExpL().visit(this, env);
 		SmplValue<?> v2 = exp.getExpR().visit(this, env);
 		return new SmplPair(v1, v2);
+	}
+
+	@Override
+	public SmplValue<?> visitExpList(ExpList exp, Environment<SmplValue<?>> env) throws SmplException {
+		/*SmplValue<?> v1 = exp.getExpL().visit(this, env);
+		SmplValue<?> v2 = exp.getExpR().visit(this, env);
+		return new SmplPair(v1, v2);*/
+		ArrayList<SmplValue<?>> vals = new ArrayList();
+		ArrayList<Exp> list = exp.getList();
+
+		for(Exp lexp : list)
+			vals.add(lexp.visit(this, env));
+
+		return SmplValue.makeList(vals);
 	}
 
 	@Override

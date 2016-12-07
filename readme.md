@@ -35,11 +35,13 @@ Completed
 * { ... }
 * comments
 * `print`, `println`
+* lists
+* `list` function
 
 TO DO
 -----
 
-* lists and built in list functions
+* built in list functions
 * vectors and built in vector functions
 * `eqv?` and `equal?`
 * `substr`

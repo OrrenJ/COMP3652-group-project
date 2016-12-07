@@ -70,7 +70,7 @@ terminal LNOT, LAND, LOR;
 terminal ASSIGN;
 
 // key words
-terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN;
+terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -95,6 +95,11 @@ non terminal Exp pair;
 non terminal Exp pairCheck;
 non terminal Exp car;
 non terminal Exp cdr;
+
+non terminal Exp list;
+
+non terminal ArrayList<Exp> args;
+non terminal ArrayList<Exp> argsAux;
 
 non terminal Exp arithExp;
 non terminal Exp logicAnd;
@@ -217,7 +222,8 @@ boolVal ::= BOOL:blit {: RESULT = SmplValue.make(blit); :};
 builtIn ::= pair:p {: RESULT = p; :} |
 			pairCheck:pc {:RESULT = pc; :} |
 			car:c {: RESULT = c; :} |
-			cdr:c {: RESULT = c; :};
+			cdr:c {: RESULT = c; :} |
+			list:l {: RESULT = l; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -230,5 +236,23 @@ car ::= CAR LPAREN expression:e RPAREN {:
 
 cdr ::= CDR LPAREN expression:e RPAREN {:
 			RESULT = new ExpCdr(e); :};
+
+args ::= expression:e argsAux:al {:
+			al.add(0,e);
+			RESULT = al;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+argsAux ::= COMMA expression:e argsAux:al {:
+			al.add(0,e);
+			RESULT = al;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+list ::= LIST LPAREN args:a RPAREN {:
+		RESULT = new ExpList(a); :} |
+		EMPTYLIST {: RESULT = new ExpList(); :};
 
 empty ::= ;

@@ -75,7 +75,7 @@ public class SmplInt extends SmplValue<SmplInt> {
 			type == SmplType.REAL)
 			return make(val == arg.intValue());
 		else
-			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+			return make(false);
 	}
 
 	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
@@ -125,7 +125,7 @@ public class SmplInt extends SmplValue<SmplInt> {
 			type == SmplType.REAL)
 			return make(val != arg.intValue());
 		else
-			throw new TypeSmplException(SmplType.INTEGER, arg.getType());
+			return make(true);
 	}
 
 	public SmplValue<?> bitnot() throws SmplException {

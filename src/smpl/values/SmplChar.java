@@ -37,7 +37,7 @@ public class SmplChar extends SmplValue<SmplChar> {
 			type == SmplType.REAL)
 			return make(val == arg.charValue());
 		else
-			throw new TypeSmplException(SmplType.CHARACTER, arg.getType());
+			return make(false);
 	}
 
 	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
@@ -87,7 +87,7 @@ public class SmplChar extends SmplValue<SmplChar> {
 			type == SmplType.REAL)
 			return make(val != arg.charValue());
 		else
-			throw new TypeSmplException(SmplType.CHARACTER, arg.getType());
+			return make(true);
 	}
 
 	public SmplValue<?> bitnot() throws SmplException {

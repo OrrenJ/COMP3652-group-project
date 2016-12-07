@@ -67,7 +67,7 @@ public class SmplReal extends SmplValue<SmplReal> {
 			type == SmplType.REAL)
 			return make(val == arg.doubleValue());
 		else
-			throw new TypeSmplException(SmplType.REAL, arg.getType());
+			return make(false);
 	}
 
 	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
@@ -117,7 +117,7 @@ public class SmplReal extends SmplValue<SmplReal> {
 			type == SmplType.REAL)
 			return make(val != arg.doubleValue());
 		else
-			throw new TypeSmplException(SmplType.REAL, arg.getType());
+			return make(true);
 	}
 
 	// return literal values

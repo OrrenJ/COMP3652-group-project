@@ -11,6 +11,8 @@ public enum SmplType {
 	CHARACTER("char"),
 	STRING("string"),
 	PAIR("pair"),
+	LIST("list"),
+	EMPTYLIST("nil"),
 	FUNCTION("user function");
 
 	private final String docString;

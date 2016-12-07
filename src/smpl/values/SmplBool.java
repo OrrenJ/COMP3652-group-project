@@ -29,14 +29,14 @@ public class SmplBool extends SmplValue<SmplBool> {
 		if(arg.getType() == SmplType.BOOLEAN)
 			return make(val == arg.boolValue());
 		else
-			throw new TypeSmplException(SmplType.BOOLEAN, arg.getType());
+			return make(false);
 	}
 
 	public SmplValue<?> neq(SmplValue<?> arg) throws SmplException {
 		if(arg.getType() == SmplType.BOOLEAN)
 			return make(val != arg.boolValue());
 		else
-			throw new TypeSmplException(SmplType.BOOLEAN, arg.getType());
+			return make(true);
 	}
 
 	public SmplValue<?> or(SmplValue<?> arg) throws SmplException {

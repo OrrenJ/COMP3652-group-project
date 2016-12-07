@@ -120,6 +120,9 @@ comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
 <YYINITIAL> "car" 	{return new Symbol(sym.CAR);}
 <YYINITIAL> "cdr" 	{return new Symbol(sym.CDR);}
 
+<YYINITIAL> "#e"	{return new Symbol(sym.EMPTYLIST);}
+<YYINITIAL> "list" 	{return new Symbol(sym.LIST);}
+
 <YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
 <YYINITIAL> "println" 	{return new Symbol(sym.PRINTLN);}
 

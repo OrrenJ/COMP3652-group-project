@@ -56,7 +56,7 @@ public class SmplString extends SmplValue<SmplString> {
 		if(arg.getType() == SmplType.STRING)
 			return make(val.compareTo(arg.stringValue()) == 0);
 		else
-			throw new TypeSmplException(SmplType.STRING, arg.getType());
+			return make(false);
 	}
 
 	public SmplValue<?> gt(SmplValue<?> arg) throws SmplException {
@@ -91,7 +91,7 @@ public class SmplString extends SmplValue<SmplString> {
 		if(arg.getType() == SmplType.STRING)
 			return make(val.compareTo(arg.stringValue()) != 0);
 		else
-			throw new TypeSmplException(SmplType.STRING, arg.getType());
+			return make(true);
 	}
 
 	// return literal values
