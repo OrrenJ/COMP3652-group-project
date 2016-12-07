@@ -13,7 +13,7 @@ public enum SmplType {
 	PAIR("pair"),
 	LIST("list"),
 	EMPTYLIST("nil"),
-	FUNCTION("user function");
+	PROCEDURE("user function");
 
 	private final String docString;
 

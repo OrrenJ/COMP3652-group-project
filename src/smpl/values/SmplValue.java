@@ -166,4 +166,8 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public String stringValue() {
 		return toString();
 	}
+
+	public SmplProcedure procValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.PROCEDURE, getType());
+	}
 }

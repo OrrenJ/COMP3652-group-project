@@ -136,6 +136,58 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	}
 
 	@Override
+	public SmplValue<?> visitExpProcedure(ExpProcedure proc, Environment<SmplValue<?>> env) throws SmplException {
+		return new SmplProcedure(proc, env);
+	}
+
+	@Override
+	public SmplValue<?> visitExpProcedureCall(ExpProcedureCall exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		ArrayList<Exp> args = exp.getArguments();
+		String id = exp.getVar();
+
+		SmplProcedure proc = (SmplProcedure) env.get(id);
+		ExpProcedure procExp = proc.getProcExp();
+
+		ArrayList<String> params = procExp.getParameters();
+		Exp body = procExp.getBody();
+
+		int a_size = args.size();
+		int p_size = params.size();
+		ArrayList<String> vars = new ArrayList();
+		ArrayList<SmplValue<?>> vals = new ArrayList();
+
+		String extra = procExp.getListVar();
+		ArrayList<SmplValue<?>> extras = new ArrayList();
+
+		// evaluate each argument and add excess to extra list if declared
+		for(int i=0; i<a_size; i++){
+			if(i<p_size){
+				vars.add(params.remove(0));
+				vals.add(args.remove(0).visit(this,env));
+			} else {
+				if(extra != null){
+					vars.add(extra);
+				}
+
+				break;
+			}
+
+		}
+
+		if(!args.isEmpty()){
+			for(Exp e : args){
+				extras.add(e.visit(this, env));
+			}
+			vals.add(SmplValue.makeList(extras));
+		}
+
+		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, env);
+
+		return body.visit(this, newEnv);
+	}
+
+	@Override
 	public SmplValue<?> visitExpPair(ExpPair exp, Environment<SmplValue<?>> env) throws SmplException {
 		SmplValue<?> v1 = exp.getExpL().visit(this, env);
 		SmplValue<?> v2 = exp.getExpR().visit(this, env);
@@ -144,9 +196,6 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitExpList(ExpList exp, Environment<SmplValue<?>> env) throws SmplException {
-		/*SmplValue<?> v1 = exp.getExpL().visit(this, env);
-		SmplValue<?> v2 = exp.getExpR().visit(this, env);
-		return new SmplPair(v1, v2);*/
 		ArrayList<SmplValue<?>> vals = new ArrayList();
 		ArrayList<Exp> list = exp.getList();
 

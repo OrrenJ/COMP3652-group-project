@@ -92,7 +92,27 @@ println(">>> End of List tests <<<\n");
 println(">>> Let tests <<<");
 
 println("(before let) x + z: " + (x + z));
-println("let x = 10 in x + z: " + (let x = 10 in x + z));
+println("let (x = 10, z = 4) x + z: " + (let (x = 10, z = 4) x + z));
 println("(after let) x + z: " + (x + z));
 
 println(">>> End of Let tests <<<\n");
+
+println(">>> Proc tests <<<");
+
+someProc := proc(x,y) x ^ y;
+
+println("someProc: " + someProc);
+println("someProc(5,3): " + someProc(5,3));
+
+otherProc := proc(x,y.z) pair(list(x,y),z);
+
+println("otherProc: " + otherProc);
+println("otherProc(7,5,3,1): " + otherProc(7,5,3,1));
+
+thirdProc := proc z z;
+
+println("thirdProc: " + thirdProc);
+println("thirdProc(7,5,3,1): " + thirdProc(7,5,3,1));
+
+println(">>> End of Proc tests <<<\n");
+

@@ -52,13 +52,13 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 
 // special symbols
-terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG, PERIOD;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
 
 // bitwise opertors
-terminal BAND, BOR, BNOT;
+terminal BAND, BOR, BNOT, LET;
 
 // relational operators
 terminal EQ, GT, LT, LE, GE, NEQ;
@@ -70,7 +70,7 @@ terminal LNOT, LAND, LOR;
 terminal ASSIGN;
 
 // key words
-terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, LET, IN;
+terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -103,6 +103,11 @@ non terminal Exp cdr;
 
 non terminal Exp list;
 
+non terminal ExpProcedure procExp;
+non terminal ArrayList<String> params;
+non terminal ArrayList<String> paramsAux;
+
+non terminal ExpProcedureCall procCallExp;
 non terminal ArrayList<Exp> args;
 non terminal ArrayList<Exp> argsAux;
 
@@ -150,10 +155,11 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 			:};
 
 expression ::= letStmt:l {: RESULT = l; :} |
+				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :};
 
-letStmt ::= LET bindings:bs IN expression:body {:
+letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
 			:};
 
@@ -172,6 +178,34 @@ bindingsAux ::= COMMA binding:b bindingsAux:bl {:
 				RESULT = bl;
 				:} |
 			empty {: RESULT = new ArrayList(); :};
+
+procExp ::= PROC LPAREN params:ps RPAREN expression:body {:
+				RESULT = new ExpProcedure(ps, body);
+			:} |
+			PROC LPAREN params:ps PERIOD VARIABLE:v RPAREN expression:body {:
+				RESULT = new ExpProcedure(ps, body, v);
+			:} |
+			PROC VARIABLE:v expression:body {:
+				RESULT = new ExpProcedure(body, v);
+			:};
+
+params ::= VARIABLE:v paramsAux:pl {:
+			pl.add(0,v);
+			RESULT = pl;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+paramsAux ::= COMMA VARIABLE:v paramsAux:pl {:
+				pl.add(0,v);
+				RESULT = pl;
+			:} | empty {:
+				RESULT = new ArrayList();
+			:};
+
+procCallExp ::= VARIABLE:v LPAREN args:a RPAREN {:
+				RESULT = new ExpProcedureCall(v, a);
+			:};
 
 arithExp ::= arithExp:e LOR logicAnd:a {:
 				RESULT = new ExpLogicOr(e, a); :} |
@@ -235,6 +269,7 @@ factor ::= val:n {: RESULT = new ExpLit(n); :} |
 		strVal:sv {: RESULT = new ExpLit(sv); :} |
 		builtIn:b {: RESULT = b; :} |
 		VARIABLE:var {: RESULT = new ExpVar(var); :} |
+		procCallExp:pc {: RESULT = pc; :} |
 		LPAREN expression:e RPAREN {: RESULT = e; :}	;
 
 val ::= INTEGER:ilit {: RESULT = SmplValue.make(ilit); :} |

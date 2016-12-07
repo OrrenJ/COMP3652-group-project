@@ -21,6 +21,8 @@ public interface Visitor<S, T> {
 	public T visitExpPow(ExpPow exp, S arg) throws SmplException;
 	public T visitExpLit(ExpLit exp, S arg) throws SmplException;
 	public T visitExpVar(ExpVar exp, S arg) throws SmplException;
+	public T visitExpProcedure(ExpProcedure exp, S arg) throws SmplException;
+	public T visitExpProcedureCall(ExpProcedureCall exp, S arg) throws SmplException;
 	public T visitExpPair(ExpPair exp, S arg) throws SmplException;
 	public T visitExpList(ExpList exp, S arg) throws SmplException;
 	public T visitExpPairCheck(ExpPairCheck exp, S arg) throws SmplException;

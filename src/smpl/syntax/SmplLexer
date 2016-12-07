@@ -115,10 +115,11 @@ comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
 <YYINITIAL>	"["	{return new Symbol(sym.LBRACKET);}
 <YYINITIAL>	"]"	{return new Symbol(sym.RBRACKET);}
 <YYINITIAL> ","	{return new Symbol(sym.COMMA);}
+<YYINITIAL> "."	{return new Symbol(sym.PERIOD);}
 <YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
 
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
-<YYINITIAL> "in"	{return new Symbol(sym.IN);}
+<YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
 
 <YYINITIAL> "pair?"	{return new Symbol(sym.PAIRCHECK);}
 <YYINITIAL> "pair" 	{return new Symbol(sym.PAIR);}
