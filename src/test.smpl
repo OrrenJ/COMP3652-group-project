@@ -68,7 +68,18 @@ println("g: " + g);
 println("h: " + h);
 println("i: " + i);
 
-println(">>> End of Variables tests <<<\n");
+println(">>> End of Substring tests <<<\n");
+
+f, g, h, i := "here", "are", "four", "strings";
+
+str := "Testing\ttesting\none\ttwo";
+
+println(str);
+println(substr(str, 5, 15));
+println(substr(str, 1,0));
+println(substr("one more\t test", 2, 10));
+
+println(">>> End of Substring tests <<<\n");
 
 println(">>> Pair tests <<<");
 

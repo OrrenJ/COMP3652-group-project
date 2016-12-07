@@ -70,7 +70,7 @@ terminal LNOT, LAND, LOR;
 terminal ASSIGN;
 
 // key words
-terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC;
+terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -100,6 +100,8 @@ non terminal Exp pair;
 non terminal Exp pairCheck;
 non terminal Exp car;
 non terminal Exp cdr;
+
+non terminal Exp substr;
 
 non terminal Exp list;
 
@@ -284,7 +286,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			pairCheck:pc {:RESULT = pc; :} |
 			car:c {: RESULT = c; :} |
 			cdr:c {: RESULT = c; :} |
-			list:l {: RESULT = l; :};
+			list:l {: RESULT = l; :} |
+			substr:s {: RESULT = s; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -297,6 +300,10 @@ car ::= CAR LPAREN expression:e RPAREN {:
 
 cdr ::= CDR LPAREN expression:e RPAREN {:
 			RESULT = new ExpCdr(e); :};
+
+substr ::= SUBSTR LPAREN expression:e1 COMMA expression:e2 COMMA expression:e3 RPAREN {:
+			RESULT = new ExpSubStr(e1, e2, e3);
+		:};
 
 args ::= expression:e argsAux:al {:
 			al.add(0,e);

@@ -40,4 +40,5 @@ public interface Visitor<S, T> {
 	public T visitExpBitWiseNot(ExpBitWiseNot exp, S arg) throws SmplException;
 	public T visitExpBitWiseAnd(ExpBitWiseAnd exp, S arg) throws SmplException;
 	public T visitExpBitWiseOr(ExpBitWiseOr exp, S arg) throws SmplException;
+	public T visitExpSubStr(ExpSubStr exp, S arg) throws SmplException;
 }

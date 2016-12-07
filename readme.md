@@ -40,13 +40,13 @@ Completed
 * `let`, `proc`
 * n-valued result
 * assign expression to multiple variables
+* `substr`
 
 TO DO
 -----
 
 * vectors and built in vector functions
 * `eqv?` and `equal?`
-* `substr`
 * list concatenation `@`
 * `call`, `lazy`, `def`
 * `if <expr> then <expr> [else <expr>]`

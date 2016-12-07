@@ -71,6 +71,8 @@ any = .|{ws}
 
 comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
 
+keywords = "substr";
+
 %%
 
 <YYINITIAL>	{nl}	{//skip newline, but reset char counter
@@ -128,6 +130,7 @@ comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
 
 <YYINITIAL> "#e"	{return new Symbol(sym.EMPTYLIST);}
 <YYINITIAL> "list" 	{return new Symbol(sym.LIST);}
+<YYINITIAL> "substr"	{return new Symbol(sym.SUBSTR);}
 
 <YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
 <YYINITIAL> "println" 	{return new Symbol(sym.PRINTLN);}

@@ -340,4 +340,21 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		return lval.bitor(rval);
 	}
 
+	@Override
+	public SmplValue<?> visitExpSubStr(ExpSubStr exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		String str = exp.getExpString().visit(this, env).stringValue();
+		int lo = exp.getStartIndex().visit(this, env).intValue();
+		int hi = exp.getEndIndex().visit(this, env).intValue();
+
+		if(lo < 0 || lo > str.length())
+			throw new SmplException("Starting index out of bounds");
+		else if (hi > str.length())
+			throw new SmplException("Ending index out of bounds");
+		else if (hi < lo)
+			return SmplValue.makeStr("");
+		else
+			return SmplValue.makeStr(str.substring(lo,hi));
+	}
+
 }
