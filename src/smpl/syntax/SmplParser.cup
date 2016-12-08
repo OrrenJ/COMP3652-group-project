@@ -52,7 +52,7 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 
 // special symbols
-terminal LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG, PERIOD;
+terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG, PERIOD;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
@@ -71,6 +71,7 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
+terminal EQV, EQUAL, CALL, LAZY, DEF;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -128,6 +129,19 @@ non terminal SmplValue<?> val;
 non terminal SmplValue<?> boolVal;
 non terminal SmplValue<?> strVal;
 
+non terminal Exp eqv;
+non terminal Exp equal;
+
+non terminal Exp call;
+non terminal ArrayList<Exp> callList;
+
+non terminal Exp lazy;
+non terminal Exp def;
+
+non terminal Exp concatList;
+
+
+
 non terminal empty;
 
 /* Grammar rules */
@@ -159,7 +173,8 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 expression ::= letStmt:l {: RESULT = l; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
-				arithExp:a {: RESULT = a; :};
+				arithExp:a {: RESULT = a; :}|
+				def:d {: RESULT = d; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
@@ -287,7 +302,12 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			car:c {: RESULT = c; :} |
 			cdr:c {: RESULT = c; :} |
 			list:l {: RESULT = l; :} |
-			substr:s {: RESULT = s; :};
+			substr:s {: RESULT = s; :}|
+			eqv:e {: RESULT = e; :}|
+			equal:e {: RESULT = e; :}|
+			call:c {: RESULT = c; :}|
+			lazy:l {: RESULT = l; :}|
+			concatList:c {: RESULT = c; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -324,5 +344,42 @@ list ::= LIST LPAREN args:a RPAREN {:
 		LBRACKET args:a RBRACKET {:
 			RESULT = new ExpList(a); :} |
 		EMPTYLIST {: RESULT = new ExpList(); :};
+
+
+eqv ::= EQV LPAREN expression:a COMMA expression:b RPAREN {:
+		RESULT = new ExpEqv(a,b);
+	:};
+
+equal ::= EQUAL LPAREN expression:a COMMA expression:b RPAREN {:
+		RESULT = new ExpEqual(a,b);
+	:};	
+
+def ::= DEF VARIABLE:v expression:e {:
+		RESULT = new ExpDef(v,e); 
+	:};
+
+call ::= CALL LPAREN procExp:p COMMA list:l RPAREN{:
+		RESULT  = new ExpCall(p,l);
+	:}|
+	CALL LPAREN procExp:p COMMA VARIABLE:v RPAREN{:
+		RESULT  = new ExpCall(p,v);
+	:};
+
+lazy ::= LAZY LPAREN expression:e RPAREN{:
+		RESULT = new ExpLazy(e);
+	:};
+
+concatList ::= list:first LSTCONCAT list:second{:
+		RESULT = new ExpConcatLst(first,second);
+	:}|
+	VARIABLE:first LSTCONCAT VARIABLE:second{:
+		RESULT = new ExpConcatLst(first,second);
+	:}|
+	list:first LSTCONCAT VARIABLE:second{:
+		RESULT = new ExpConcatLst(first,second);
+	:}|
+	VARIABLE:first LSTCONCAT list:second{:
+		RESULT = new ExpConcatLst(first,second);
+	:};
 
 empty ::= ;

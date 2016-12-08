@@ -357,4 +357,212 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			return SmplValue.makeStr(str.substring(lo,hi));
 	}
 
+	@Override
+	public SmplValue<?> visitExpEqv(ExpEqv exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		SmplValue<?> exp1 = exp.getExpFirst().visit(this, env);
+		SmplValue<?> exp2 = exp.getExpSecond().visit(this, env);
+
+		if(exp1 == exp2)
+		{
+			return SmplValue.make(true);
+		}else { return SmplValue.make(false); }
+		
+	}
+
+	@Override
+	public SmplValue<?> visitExpEqual(ExpEqual exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		String exp1 = exp.getExpFirst().visit(this, env).toString();
+		String exp2 = exp.getExpSecond().visit(this, env).toString();
+		return SmplValue.make(exp1.equals(exp2));
+	}
+
+	@Override
+	public SmplValue<?> visitExpCall(ExpCall exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		ExpProcedure functionDef = exp.getExp();
+		ArrayList<String> vars = functionDef.getParameters();
+		Exp body = functionDef.getBody();
+		ArrayList<Exp> expVals;
+
+		ArrayList<SmplValue<?>> vals = new ArrayList<SmplValue<?>>();
+
+		if(exp.getId().equals(" "))
+		{
+			expVals = exp.getExpList().getList();
+			for(int i = 0; i < expVals.size(); i++)
+			{
+				vals.add((SmplValue) expVals.get(i).visit(this, env));
+			}
+		}
+		else
+		{ 
+			SmplList l = (SmplList)env.get(exp.getId()); 
+			
+
+			while (l.getFirstValue() != null )
+			{
+				vals.add((SmplValue) l.getFirstValue());
+				
+				
+				l = (SmplList) l.getSecondValue();
+			}
+
+			Collections.reverse(vals);
+
+		}
+
+
+		
+
+		
+
+		Environment<SmplValue<?>> newEnv = new Environment<> (vars, vals, env);
+    	return body.visit(this, newEnv);
+
+	}
+
+	@Override
+	public SmplValue<?> visitExpLazy(ExpLazy exp, Environment<SmplValue<?>> env) throws SmplException {
+		
+		Boolean exists;
+
+		try 
+		{
+		    env.get("101lazy");
+		    exists = true;
+		}catch(SmplException e) { exists = false; }
+
+		if(!exists)
+		{
+			Exp body = exp.getExp();
+			env.put("101lazy", body.visit(this, env));
+		}else { result = env.get("101lazy"); }
+		
+		return result;
+
+	}
+
+	@Override
+	public SmplValue<?> visitExpDef(ExpDef exp, Environment<SmplValue<?>> env) throws SmplException {
+		Exp body = exp.getExp();
+		String var = exp.getVar();
+
+		env.put(var, body.visit(this, env));
+
+		return result;
+
+	}
+
+	@Override
+	public SmplValue<?> visitExpConcatLst(ExpConcatLst exp, Environment<SmplValue<?>> env) throws SmplException {
+		Integer combo = exp.getCombo();
+
+		ArrayList<Exp> lst1; 
+		ArrayList<Exp> lst2;
+  		String var1; 
+  		String var2;
+  		ArrayList<SmplValue<?>> vals = new ArrayList();
+		
+
+		
+		if(combo == 1)
+		{
+
+
+			lst2 = exp.getExpList2().getList();
+			lst1 = exp.getExpList1().getList(); 
+			
+
+			for(Exp lexp : lst1)
+			{
+				vals.add(lexp.visit(this, env));
+			}
+				
+
+			for(Exp lexp : lst2)
+				{
+					vals.add(lexp.visit(this, env));
+				}
+
+			return SmplValue.makeList(vals);
+		}
+		else if (combo == 2)
+		{
+			var1 = exp.getVar1(); 
+  			var2 = exp.getVar2();
+
+  			SmplList l1 = (SmplList)env.get(var1); 
+  			SmplList l2 = (SmplList)env.get(var2); 
+
+  			while (l2.getFirstValue() != null )
+			{
+				vals.add((SmplValue) l2.getFirstValue());
+				
+				
+				l2 = (SmplList) l2.getSecondValue();
+
+			}
+  			while (l1.getFirstValue() != null )
+			{
+				vals.add((SmplValue) l1.getFirstValue());
+				
+				
+				l1 = (SmplList) l1.getSecondValue();
+			}
+			
+			
+			Collections.reverse(vals);
+			return SmplValue.makeList(vals);
+		}
+		else if (combo == 3)
+		{
+			lst1 = exp.getExpList1().getList(); 
+  			var2 = exp.getVar2();
+
+  			SmplList l2 = (SmplList)env.get(var2); 
+
+  			for(Exp lexp : lst1)
+				vals.add(lexp.visit(this, env));
+
+			Collections.reverse(vals);
+			while (l2.getFirstValue() != null )
+			{
+				vals.add(0,(SmplValue) l2.getFirstValue());
+				
+				
+				l2 = (SmplList) l2.getSecondValue();
+
+			}
+
+			Collections.reverse(vals);
+			return SmplValue.makeList(vals);
+		}
+		else
+		{
+			var1 = exp.getVar1(); 
+			lst2 = exp.getExpList2().getList();
+
+			SmplList l1 = (SmplList)env.get(var1); 
+
+			while (l1.getFirstValue() != null )
+			{
+				vals.add((SmplValue) l1.getFirstValue());
+				
+				
+				l1 = (SmplList) l1.getSecondValue();
+
+			}
+			Collections.reverse(vals);
+
+			for(Exp lexp : lst2)
+				vals.add(lexp.visit(this, env));
+			
+			return SmplValue.makeList(vals);
+		}
+
+
+	}
+
 }

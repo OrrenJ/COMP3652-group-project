@@ -41,4 +41,11 @@ public interface Visitor<S, T> {
 	public T visitExpBitWiseAnd(ExpBitWiseAnd exp, S arg) throws SmplException;
 	public T visitExpBitWiseOr(ExpBitWiseOr exp, S arg) throws SmplException;
 	public T visitExpSubStr(ExpSubStr exp, S arg) throws SmplException;
+	public T visitExpEqv(ExpEqv exp, S arg) throws SmplException;
+	public T visitExpEqual(ExpEqual exp, S arg) throws SmplException;
+	public T visitExpCall(ExpCall exp, S arg) throws SmplException;
+	public T visitExpLazy(ExpLazy exp, S arg) throws SmplException;
+	public T visitExpDef(ExpDef exp, S arg) throws SmplException;
+	public T visitExpConcatLst(ExpConcatLst exp, S arg) throws SmplException;
+
 }

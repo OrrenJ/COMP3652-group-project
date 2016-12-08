@@ -119,6 +119,8 @@ keywords = "substr";
 <YYINITIAL> ","	{return new Symbol(sym.COMMA);}
 <YYINITIAL> "."	{return new Symbol(sym.PERIOD);}
 <YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
+<YYINITIAL> "@"	{return new Symbol(sym.LSTCONCAT);}
+
 
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
 <YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
@@ -134,6 +136,14 @@ keywords = "substr";
 
 <YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
 <YYINITIAL> "println" 	{return new Symbol(sym.PRINTLN);}
+
+<YYINITIAL> "eqv?" 	{return new Symbol(sym.EQV);}
+<YYINITIAL> "equal?" 	{return new Symbol(sym.EQUAL);}
+
+<YYINITIAL> "call" 	{return new Symbol(sym.CALL);}
+<YYINITIAL> "lazy" 	{return new Symbol(sym.LAZY);}
+<YYINITIAL> "def"  	{return new Symbol(sym.DEF);}
+
 
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER
