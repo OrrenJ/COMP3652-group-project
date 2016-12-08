@@ -41,14 +41,14 @@ Completed
 * n-valued result
 * assign expression to multiple variables
 * `substr`
+* `eqv?` and `equal?`
+* `call`, `lazy`, `def`
+* list concatenation `@`
 
 TO DO
 -----
 
 * vectors and built in vector functions
-* `eqv?` and `equal?`
-* list concatenation `@`
-* `call`, `lazy`, `def`
 * `if <expr> then <expr> [else <expr>]`
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
 * `read`, `readint`
