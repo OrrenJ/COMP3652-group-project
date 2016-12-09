@@ -121,7 +121,7 @@ keywords = "substr";
 <YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
 <YYINITIAL> "@"	{return new Symbol(sym.LSTCONCAT);}
 
-
+// KETWORDS
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
 <YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
 
@@ -146,6 +146,11 @@ keywords = "substr";
 
 <YYINITIAL> "read"  	{return new Symbol(sym.READ);}
 <YYINITIAL> "readint"  	{return new Symbol(sym.READINT);}
+
+<YYINITIAL> "if"  	{return new Symbol(sym.IF);}
+<YYINITIAL> "then"  {return new Symbol(sym.THEN);}
+<YYINITIAL> "else"  {return new Symbol(sym.ELSE);}
+<YYINITIAL> "case"  {return new Symbol(sym.CASE);}
 
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER

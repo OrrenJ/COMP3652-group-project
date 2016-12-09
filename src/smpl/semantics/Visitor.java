@@ -49,5 +49,6 @@ public interface Visitor<S, T> {
 	public T visitExpConcatLst(ExpConcatLst exp, S arg) throws SmplException;
 	public T visitExpRead(ExpRead exp, S arg) throws SmplException;
 	public T visitExpReadInt(ExpReadInt exp, S arg) throws SmplException;
+	public T visitExpIf(ExpIf exp, S arg) throws SmplException;
 
 }
