@@ -13,8 +13,9 @@ public class sym {
   public static final int GE = 27;
   public static final int PERIOD = 12;
   public static final int READINT = 49;
+  public static final int CASE = 53;
   public static final int CAR = 35;
-  public static final int INTEGER = 50;
+  public static final int INTEGER = 54;
   public static final int CDR = 36;
   public static final int LPAREN = 3;
   public static final int SEMI = 9;
@@ -22,10 +23,10 @@ public class sym {
   public static final int LSTCONCAT = 2;
   public static final int PAIRCHECK = 34;
   public static final int MINUS = 14;
-  public static final int CHARACTER = 53;
+  public static final int CHARACTER = 57;
   public static final int RPAREN = 4;
   public static final int LT = 25;
-  public static final int BOOL = 52;
+  public static final int BOOL = 56;
   public static final int LAZY = 46;
   public static final int COMMA = 10;
   public static final int CALL = 45;
@@ -34,6 +35,7 @@ public class sym {
   public static final int DIV = 16;
   public static final int BNOT = 21;
   public static final int PLUS = 13;
+  public static final int IF = 50;
   public static final int ASSIGN = 32;
   public static final int LE = 26;
   public static final int EOF = 0;
@@ -48,18 +50,20 @@ public class sym {
   public static final int NEQ = 28;
   public static final int PAIR = 33;
   public static final int EQ = 23;
-  public static final int REAL = 51;
+  public static final int REAL = 55;
   public static final int EQV = 43;
   public static final int NEG = 11;
+  public static final int ELSE = 51;
   public static final int BOR = 20;
   public static final int LBRACE = 5;
-  public static final int VARIABLE = 55;
+  public static final int VARIABLE = 59;
   public static final int READ = 48;
   public static final int LIST = 39;
   public static final int SUBSTR = 42;
   public static final int LET = 22;
+  public static final int THEN = 52;
   public static final int RBRACE = 6;
-  public static final int STRING = 54;
+  public static final int STRING = 58;
   public static final int PROC = 41;
   public static final int DEF = 47;
   public static final int GT = 24;
@@ -115,6 +119,10 @@ public class sym {
   "DEF",
   "READ",
   "READINT",
+  "IF",
+  "ELSE",
+  "THEN",
+  "CASE",
   "INTEGER",
   "REAL",
   "BOOL",

@@ -568,11 +568,9 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpRead(ExpRead exp, Environment<SmplValue<?>> env) throws SmplException {
 
-
 		Scanner input = new Scanner(System.in);
 		result = SmplValue.makeStr(input.nextLine());
 		return result;
-
 	}
 
 	@Override
@@ -581,7 +579,49 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		Scanner input = new Scanner(System.in);
 		result = SmplValue.make(input.nextInt());
 		return result;
-
 	}
 
+	@Override
+	public SmplValue<?> visitExpIf(ExpIf exp, Environment<SmplValue<?>> env) throws SmplException {
+		
+		Boolean conBool;
+		if(exp.getElse())
+		{
+			Exp conExp = exp.getCondition();
+			SmplValue conValue = conExp.visit(this, env);
+
+			try{
+				conBool = conValue.boolValue();
+			}catch (Exception e){ throw new SmplException("Condition must evaluate to a boolean."); }
+		
+			if(conBool)
+			{
+				Exp ifArgBody = exp.getIfArg();
+				result = ifArgBody.visit(this, env);
+			}
+			else
+			{ 
+				Exp elseArgBody = exp.getElseArg();
+				result = elseArgBody.visit(this, env); 
+			}
+		}
+		else
+		{
+			Exp conExp = exp.getCondition();
+			SmplValue conValue = conExp.visit(this, env);
+
+			try{
+				conBool = conValue.boolValue();
+			}catch (Exception e){ throw new SmplException("Condition must evaluate to a boolean."); }
+			
+			if(conBool)
+			{
+				Exp ifArgBody = exp.getIfArg();
+				result = ifArgBody.visit(this, env);
+			}
+		}
+
+		return result;
+
+	}
 }

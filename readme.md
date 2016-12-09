@@ -45,12 +45,13 @@ Completed
 * `call`, `lazy`, `def`
 * list concatenation `@`
 * `read`, `readint`
+* `if <expr> then <expr> [else <expr>]`
 
 TO DO
 -----
 
 * vectors and built in vector functions
-* `if <expr> then <expr> [else <expr>]`
+
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
 
 

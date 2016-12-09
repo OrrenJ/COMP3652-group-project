@@ -71,7 +71,7 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
-terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT;
+terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -133,13 +133,15 @@ non terminal Exp eqv;
 non terminal Exp equal;
 
 non terminal Exp call;
-non terminal ArrayList<Exp> callList;
 
 non terminal Exp lazy;
 non terminal Exp def;
 
 non terminal Exp read;
 non terminal Exp readint;
+
+non terminal Exp expIf;
+non terminal Exp expElse;
 
 non terminal Exp concatList;
 
@@ -177,7 +179,8 @@ expression ::= letStmt:l {: RESULT = l; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :}|
-				def:d {: RESULT = d; :};
+				def:d {: RESULT = d; :}|
+				expIf:e {: RESULT = e; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
@@ -394,5 +397,15 @@ read ::= READ LPAREN RPAREN {:
 readint ::= READINT LPAREN RPAREN {:
 		RESULT = new ExpReadInt();
 	:};
+
+expIf ::= IF expression:con THEN expression:ifArg expElse:elseArg{:
+		RESULT = new ExpIf(con, ifArg, elseArg);
+	:};
+
+expElse ::= LBRACKET ELSE expression:elseArg RBRACKET {:
+		RESULT = elseArg;
+
+	:};
+
 
 empty ::= ;
