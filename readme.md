@@ -44,6 +44,7 @@ Completed
 * `eqv?` and `equal?`
 * `call`, `lazy`, `def`
 * list concatenation `@`
+* `read`, `readint`
 
 TO DO
 -----
@@ -51,7 +52,7 @@ TO DO
 * vectors and built in vector functions
 * `if <expr> then <expr> [else <expr>]`
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
-* `read`, `readint`
+
 
 Optional (with suggested implementation)
 ----------------------------------------

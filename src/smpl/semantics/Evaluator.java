@@ -466,7 +466,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
   		ArrayList<SmplValue<?>> vals = new ArrayList();
 		
 
-		
+
 		if(combo == 1)
 		{
 
@@ -562,6 +562,25 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			return SmplValue.makeList(vals);
 		}
 
+
+	}
+
+	@Override
+	public SmplValue<?> visitExpRead(ExpRead exp, Environment<SmplValue<?>> env) throws SmplException {
+
+
+		Scanner input = new Scanner(System.in);
+		result = SmplValue.makeStr(input.nextLine());
+		return result;
+
+	}
+
+	@Override
+	public SmplValue<?> visitExpReadInt(ExpReadInt exp, Environment<SmplValue<?>> env) throws SmplException {
+		
+		Scanner input = new Scanner(System.in);
+		result = SmplValue.make(input.nextInt());
+		return result;
 
 	}
 

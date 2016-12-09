@@ -71,7 +71,7 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
-terminal EQV, EQUAL, CALL, LAZY, DEF;
+terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -137,6 +137,9 @@ non terminal ArrayList<Exp> callList;
 
 non terminal Exp lazy;
 non terminal Exp def;
+
+non terminal Exp read;
+non terminal Exp readint;
 
 non terminal Exp concatList;
 
@@ -307,7 +310,9 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			equal:e {: RESULT = e; :}|
 			call:c {: RESULT = c; :}|
 			lazy:l {: RESULT = l; :}|
-			concatList:c {: RESULT = c; :};
+			concatList:c {: RESULT = c; :}|
+			read:r {: RESULT = r; :}|
+			readint:r {: RESULT = r; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -380,6 +385,14 @@ concatList ::= list:first LSTCONCAT list:second{:
 	:}|
 	VARIABLE:first LSTCONCAT list:second{:
 		RESULT = new ExpConcatLst(first,second);
+	:};
+
+read ::= READ LPAREN RPAREN {:
+		RESULT = new ExpRead();
+	:};
+
+readint ::= READINT LPAREN RPAREN {:
+		RESULT = new ExpReadInt();
 	:};
 
 empty ::= ;
