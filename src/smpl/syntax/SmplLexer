@@ -144,6 +144,8 @@ keywords = "substr";
 <YYINITIAL> "lazy" 	{return new Symbol(sym.LAZY);}
 <YYINITIAL> "def"  	{return new Symbol(sym.DEF);}
 
+<YYINITIAL> "read"  	{return new Symbol(sym.READ);}
+<YYINITIAL> "readint"  	{return new Symbol(sym.READINT);}
 
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER
