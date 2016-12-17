@@ -19,6 +19,14 @@ public class SmplList extends SmplPair {
 		return SmplType.LIST;
 	}
 
+	public SmplValue<?> getCurrentValue(){
+		return getFirstValue();
+	}
+
+	public SmplList getNextValue(){
+		return (SmplList) getSecondValue();
+	}
+
 	// check if pairs have equivalent values
 	public SmplValue<?> eq(SmplValue<?> arg) throws SmplException {
 		if(arg.getType() == SmplType.LIST){

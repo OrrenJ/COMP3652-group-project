@@ -69,7 +69,7 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 any = .|{ws}
 
-comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
+comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
 
 keywords = "substr";
 
@@ -80,9 +80,6 @@ keywords = "substr";
 			}
 <YYINITIAL>	{ws}	{
 			 // skip whitespace
-			}
-<YYINITIAL>	{comment}	{
-			 // skip comment
 			}
 
 <YYINITIAL>	{ws}"+"{ws}	{return new Symbol(sym.PLUS);}
@@ -195,4 +192,7 @@ keywords = "substr";
 <YYINITIAL> {alpha}{varchars}* {
 				// VARIABLE
 				return new Symbol(sym.VARIABLE, yytext());
+			}
+<YYINITIAL>	{comment}	{
+			 // skip comment
 			}

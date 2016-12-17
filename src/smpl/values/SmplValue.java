@@ -57,7 +57,7 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public static SmplList makeList(ArrayList<SmplValue<?>> v){
 
 		if(v.size() > 0){
-			return new SmplList(v.remove(v.size()-1), makeList(v));
+			return new SmplList(v.remove(0), makeList(v));
 		} else {
 			return new SmplEmptyList();
 		}

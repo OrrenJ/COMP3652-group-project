@@ -153,13 +153,15 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpProcedureCall(ExpProcedureCall exp, Environment<SmplValue<?>> env) throws SmplException {
 
-		ArrayList<Exp> args = exp.getArguments();
+		// create copy of parameters since we will be manipulating this list
+		ArrayList<Exp> args = new ArrayList(exp.getArguments());
 		String id = exp.getVar();
 
 		SmplProcedure proc = (SmplProcedure) env.get(id);
 		ExpProcedure procExp = proc.getProcExp();
 
-		ArrayList<String> params = procExp.getParameters();
+		// create copy of parameters since we will be manipulating this list
+		ArrayList<String> params = new ArrayList(procExp.getParameters());
 		Exp body = procExp.getBody();
 
 		int a_size = args.size();
@@ -381,45 +383,73 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpCall(ExpCall exp, Environment<SmplValue<?>> env) throws SmplException {
 
-		ExpProcedure functionDef = exp.getExp();
-		ArrayList<String> vars = functionDef.getParameters();
-		Exp body = functionDef.getBody();
-		ArrayList<Exp> expVals;
+		Exp expl = exp.getExpL();
+		Exp expr = exp.getExpR();
 
-		ArrayList<SmplValue<?>> vals = new ArrayList<SmplValue<?>>();
+		// confirm that first argument is a procedure
+		SmplType expltype = expl.visit(this, env).getType();
 
-		if(exp.getId().equals(" "))
-		{
-			expVals = exp.getExpList().getList();
-			for(int i = 0; i < expVals.size(); i++)
-			{
-				vals.add((SmplValue) expVals.get(i).visit(this, env));
+		if(expltype != SmplType.PROCEDURE)
+			throw new TypeSmplException(SmplType.PROCEDURE, expltype);
+
+		// grab procedure
+		SmplProcedure proc = (SmplProcedure) expl.visit(this, env);
+		ExpProcedure toEval = proc.getProcExp();
+
+		// get procedure parameters
+		ArrayList<String> _params = new ArrayList(toEval.getParameters());
+		int p_size = _params.size();
+
+		// get procedure body
+		Exp body = toEval.getBody();
+
+		// confirm that second argument is a list
+		SmplType exprtype = expr.visit(this, env).getType();
+
+		if(exprtype != SmplType.LIST && exprtype != SmplType.EMPTYLIST)
+			throw new TypeSmplException(SmplType.LIST, exprtype);
+
+		// grab list
+		SmplList lst = (SmplList) expr.visit(this, env);
+
+		// convert to ArrayList
+		ArrayList<SmplValue<?>> args = new ArrayList();
+		ArrayList<SmplValue<?>> extras = new ArrayList();
+
+		// ArrayList of parameters that are matched by arguments
+		ArrayList<String> params = new ArrayList();
+
+		// add value for each parameter,
+		// create arraylist of extras,
+		// add extras as argument
+		int i = 0;	// counter
+		while(lst.getType() != SmplType.EMPTYLIST){
+			if(i < p_size){
+				args.add(lst.getCurrentValue());
+				params.add(_params.get(i));
+			} else {
+				extras.add(lst.getCurrentValue());
 			}
-		}
-		else
-		{ 
-			SmplList l = (SmplList)env.get(exp.getId()); 
-			
 
-			while (l.getFirstValue() != null )
-			{
-				vals.add((SmplValue) l.getFirstValue());
-				
-				
-				l = (SmplList) l.getSecondValue();
-			}
+			lst = lst.getNextValue();
 
-			Collections.reverse(vals);
-
+			i++;	// increment counter
 		}
 
+		// get extra veriable
+		String e = toEval.getListVar();
+		if(e != null)
+			params.add(e);
 
-		
+		// add extras to args
+		if(!extras.isEmpty())
+			args.add(SmplValue.makeList(extras));
 
-		
+		//System.out.println(args);
+		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(params, args, env);
 
-		Environment<SmplValue<?>> newEnv = new Environment<> (vars, vals, env);
-    	return body.visit(this, newEnv);
+		//System.out.println(newEnv);
+		return body.visit(this, newEnv);
 
 	}
 
@@ -577,8 +607,12 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	public SmplValue<?> visitExpReadInt(ExpReadInt exp, Environment<SmplValue<?>> env) throws SmplException {
 		
 		Scanner input = new Scanner(System.in);
-		result = SmplValue.make(input.nextInt());
-		return result;
+		if(input.hasNextInt()){
+			result = SmplValue.make(input.nextInt());
+			return result;
+		} else {
+			throw new TypeSmplException("Type Error: Input must be of type " + SmplType.INTEGER);
+		}
 	}
 
 	@Override

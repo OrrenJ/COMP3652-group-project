@@ -24,6 +24,8 @@ println("#xc0ff: " + #xc00ff);
 
 println(">>> End of Integer tests <<<\n");
 
+// characters
+
 println(">>> Character tests <<<");
 
 println("#cY: " + #cY);
@@ -31,6 +33,8 @@ println("#c\\\\: " + #c\\);
 println("#c0072: " + #c0072);
 
 println(">>> End of Character tests <<<\n");
+
+// booleans
 
 println(">>> Boolean tests <<<");
 
@@ -50,12 +54,14 @@ println("#f or not #f and #t: " + (#f or not #f and #t));
 
 println(">>> End of Boolean tests <<<\n");
 
+// variables
+
 println(">>> Variables tests <<<");
 
 x := 5;
 y := #cQ;
-z := -4;
-b := #t;
+z := -x;
+def b #t;
 
 f, g, h, i := "here", "are", "four", "strings";
 
@@ -68,7 +74,11 @@ println("g: " + g);
 println("h: " + h);
 println("i: " + i);
 
-println(">>> End of Substring tests <<<\n");
+println(">>> End of Variable tests <<<\n");
+
+// string subtrings
+
+println(">>> Substring tests <<<");
 
 f, g, h, i := "here", "are", "four", "strings";
 
@@ -81,6 +91,8 @@ println(substr("one more\t test", 2, 10));
 
 println(">>> End of Substring tests <<<\n");
 
+// pairs
+
 println(">>> Pair tests <<<");
 
 p := pair(x, y);
@@ -89,8 +101,11 @@ println("p: " + p);
 println("car(p): " + car(p));
 println("cdr(p): " + cdr(p));
 println("pair(z, p): " + pair(z, p));
+println("pair?(x): " + pair?(x));
 
 println(">>> End of pair tests <<<\n");
+
+// lists
 
 println(">>> List tests <<<");
 
@@ -101,10 +116,13 @@ q := [x, y, z, b];
 println("l1: " + l1);
 println("l2: " + l2);
 println("q: " + q);
+println("l2 @ q: " + l2 @ q);
 println("l1 = l2: " + (l1 = l2));
 println("l1 = q: " + (l1 = q));
 
 println(">>> End of List tests <<<\n");
+
+// let
 
 println(">>> Let tests <<<");
 
@@ -112,7 +130,14 @@ println("(before let) x + z: " + (x + z));
 println("let (x = 10, z = 4) x + z: " + (let (x = 10, z = 4) x + z));
 println("(after let) x + z: " + (x + z));
 
+myProc := proc(x,y,z) x ^ y - z;
+
+println("myProc: " + myProc);
+println("let(x = 3, y = 3, z = 5) call(myProc): " + (let(x = 3, y = 3, z = 5) call(myProc)));
+
 println(">>> End of Let tests <<<\n");
+
+// proc
 
 println(">>> Proc tests <<<");
 
@@ -120,16 +145,48 @@ someProc := proc(x,y) x ^ y;
 
 println("someProc: " + someProc);
 println("someProc(5,3): " + someProc(5,3));
+println("call(someProc, [2,5]): " + call(someProc, [2,5]));
 
-otherProc := proc(x,y.z) pair(list(x,y),z);
+otherProc := proc(x,y.z) list(x,y) @ z;
 
 println("otherProc: " + otherProc);
 println("otherProc(7,5,3,1): " + otherProc(7,5,3,1));
-
+println("otherProc(\"try\" + \" this\", 2 ^ 4, #t or #f, #c_): " + otherProc("try" + " this", 2 ^ 4, #t or #f, #c_));
 thirdProc := proc z z;
 
 println("thirdProc: " + thirdProc);
 println("thirdProc(7,5,3,1): " + thirdProc(7,5,3,1));
+println("thirdProc(\"hello\", \"world\"): " + thirdProc("hello", "world"));
+
+println("call(otherProc, list(\"try\" + \" this\", 2 ^ 4, #t or #f, #c_)): " + call(otherProc, list("try" + " this", 2 ^ 4, #t or #f, #c_)));
 
 println(">>> End of Proc tests <<<\n");
+
+// if
+
+println(">>> If tests <<<");
+
+print("if 5 ^ 3 < 100 then print(\"foo\") else print(\"bar\"): ");
+
+if 5 ^ 3 < 100 then println("foo") else println("bar");
+
+print("if 2 ^ 4 = 4 ^ 2 then print(\"foo\") else print(\"bar\"): ");
+
+if 2 ^ 4 = 4 ^ 2 then println("foo") else println("bar");
+
+println(">>> End of If tests <<<\n");
+
+// read and readln
+
+println(">>> Read tests <<<");
+
+print("read << ");
+rd := read();
+println("read: " + rd);
+
+print("readint << ");
+ri := readint();
+println("readint: " + ri);
+
+println(">>> End of Read tests <<<\n");
 

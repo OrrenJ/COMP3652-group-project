@@ -47,7 +47,10 @@ public class ExpProcedure extends Exp {
 
   @Override
   public String toString() {
-    return "Procedure: " + params + " -> " + body;
+    if(listvar != null)
+      return "Procedure: " + params + " . " + listvar + " -> " + body;
+    else
+      return "Procedure: " + params + " -> " + body;
   }
 }
 

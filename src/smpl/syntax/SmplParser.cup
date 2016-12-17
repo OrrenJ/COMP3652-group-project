@@ -162,7 +162,6 @@ stmtList ::= stmtList:lst stmt:s {:
 			:};
 
 stmt ::= definition:d SEMI {: RESULT = d; :} |
-			print:p SEMI {: RESULT = p; :} |
 			expression:e SEMI {: RESULT = e; :};
 
 definition ::= params:p ASSIGN args:a {:
@@ -176,6 +175,7 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 			:};
 
 expression ::= letStmt:l {: RESULT = l; :} |
+				print:p {: RESULT = p; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :}|
@@ -366,12 +366,12 @@ def ::= DEF VARIABLE:v expression:e {:
 		RESULT = new ExpDef(v,e); 
 	:};
 
-call ::= CALL LPAREN procExp:p COMMA list:l RPAREN{:
-		RESULT  = new ExpCall(p,l);
-	:}|
-	CALL LPAREN procExp:p COMMA VARIABLE:v RPAREN{:
-		RESULT  = new ExpCall(p,v);
-	:};
+call ::= CALL LPAREN expression:p COMMA expression:l RPAREN {:
+			RESULT = new ExpCall(p,l);
+		:} | 
+		CALL LPAREN expression:p RPAREN {:
+			RESULT = new ExpCall(p);
+		:};
 
 lazy ::= LAZY LPAREN expression:e RPAREN{:
 		RESULT = new ExpLazy(e);
@@ -402,9 +402,8 @@ expIf ::= IF expression:con THEN expression:ifArg expElse:elseArg{:
 		RESULT = new ExpIf(con, ifArg, elseArg);
 	:};
 
-expElse ::= LBRACKET ELSE expression:elseArg RBRACKET {:
+expElse ::= ELSE expression:elseArg {:
 		RESULT = elseArg;
-
 	:};
 
 
