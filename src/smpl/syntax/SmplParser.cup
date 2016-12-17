@@ -52,7 +52,7 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 
 // special symbols
-terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG, PERIOD;
+terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COLON, COMMA, NEG, PERIOD, LVEC, RVEC;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
@@ -71,7 +71,7 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
-terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE;
+terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -84,7 +84,7 @@ terminal String VARIABLE;
 /* Non terminals */
 non terminal SmplProgram program;
 non terminal StmtSequence stmtList;
-non terminal Statement stmt;
+non terminal Exp stmt;
 non terminal StmtDefinition definition;
 non terminal StmtPrint print;
 
@@ -105,6 +105,9 @@ non terminal Exp cdr;
 non terminal Exp substr;
 
 non terminal Exp list;
+non terminal Exp vector;
+non terminal Exp vectorRef;
+non terminal Exp size;
 
 non terminal ExpProcedure procExp;
 non terminal ArrayList<String> params;
@@ -113,6 +116,9 @@ non terminal ArrayList<String> paramsAux;
 non terminal ExpProcedureCall procCallExp;
 non terminal ArrayList<Exp> args;
 non terminal ArrayList<Exp> argsAux;
+non terminal Exp subvector;
+non terminal ArrayList<Exp> vargs;
+non terminal ArrayList<Exp> vargsAux;
 
 non terminal Exp arithExp;
 non terminal Exp logicAnd;
@@ -143,13 +149,17 @@ non terminal Exp readint;
 non terminal Exp expIf;
 non terminal Exp expElse;
 
+non terminal Exp expCase;
+non terminal ExpPair _case;
+non terminal ArrayList<ExpPair> cases;
+
 non terminal Exp concatList;
-
-
 
 non terminal empty;
 
 /* Grammar rules */
+
+precedence left COLON, ELSE;
 
 program ::= stmtList:s {: RESULT = new SmplProgram(s); :};
 
@@ -162,6 +172,8 @@ stmtList ::= stmtList:lst stmt:s {:
 			:};
 
 stmt ::= definition:d SEMI {: RESULT = d; :} |
+			expIf:e {: RESULT = e; :} |
+			expCase:c {: RESULT = c; :} |
 			expression:e SEMI {: RESULT = e; :};
 
 definition ::= params:p ASSIGN args:a {:
@@ -179,8 +191,7 @@ expression ::= letStmt:l {: RESULT = l; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
 				arithExp:a {: RESULT = a; :}|
-				def:d {: RESULT = d; :}|
-				expIf:e {: RESULT = e; :};
+				def:d {: RESULT = d; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
@@ -292,8 +303,9 @@ factor ::= val:n {: RESULT = new ExpLit(n); :} |
 		strVal:sv {: RESULT = new ExpLit(sv); :} |
 		builtIn:b {: RESULT = b; :} |
 		VARIABLE:var {: RESULT = new ExpVar(var); :} |
+		vectorRef:vr {: RESULT = vr; :} |
 		procCallExp:pc {: RESULT = pc; :} |
-		LPAREN expression:e RPAREN {: RESULT = e; :}	;
+		LPAREN expression:e RPAREN {: RESULT = e; :};
 
 val ::= INTEGER:ilit {: RESULT = SmplValue.make(ilit); :} |
 		REAL: rlit {: RESULT = SmplValue.make(rlit); :};
@@ -308,6 +320,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			car:c {: RESULT = c; :} |
 			cdr:c {: RESULT = c; :} |
 			list:l {: RESULT = l; :} |
+			vector:v {: RESULT = v; :} |
+			size:s {: RESULT = s; :} |
 			substr:s {: RESULT = s; :}|
 			eqv:e {: RESULT = e; :}|
 			equal:e {: RESULT = e; :}|
@@ -353,6 +367,37 @@ list ::= LIST LPAREN args:a RPAREN {:
 			RESULT = new ExpList(a); :} |
 		EMPTYLIST {: RESULT = new ExpList(); :};
 
+vector ::= LVEC vargs:v RVEC {:
+			RESULT = new ExpVector(v);
+		:};
+
+subvector ::= expression:e1 COLON expression:e2 {:
+				RESULT = new ExpSubVector(e1,e2);
+			:} | expression:e {: 
+				RESULT = e; 
+			:};
+
+vargs ::= subvector:s vargsAux:vl {:
+			vl.add(0,s);
+			RESULT = vl;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+vargsAux ::= COMMA subvector:s vargsAux:vl {:
+			vl.add(0,s);
+			RESULT = vl;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+vectorRef ::= VARIABLE:v LBRACKET expression:n RBRACKET {:
+			RESULT = new ExpVectorRef(v,n);
+		:};
+
+size ::= SIZE LPAREN expression:e RPAREN {:
+			RESULT = new ExpSize(e);
+		:};
 
 eqv ::= EQV LPAREN expression:a COMMA expression:b RPAREN {:
 		RESULT = new ExpEqv(a,b);
@@ -398,13 +443,30 @@ readint ::= READINT LPAREN RPAREN {:
 		RESULT = new ExpReadInt();
 	:};
 
-expIf ::= IF expression:con THEN expression:ifArg expElse:elseArg{:
+expIf ::= IF expression:con THEN stmt:ifArg expElse:elseArg{:
 		RESULT = new ExpIf(con, ifArg, elseArg);
 	:};
 
-expElse ::= ELSE expression:elseArg {:
+expElse ::= ELSE stmt:elseArg {:
 		RESULT = elseArg;
+	:} | empty {:
+		RESULT = null;
 	:};
 
+expCase ::= CASE LBRACE cases:c RBRACE {:
+				RESULT = new ExpCase(c);
+			:};
+
+_case ::= expression:c COLON expression:r {:
+			RESULT = new ExpPair(c,r);
+		:} | ELSE COLON expression:r {:
+			RESULT = new ExpPair(new ExpLit(SmplValue.makeStrEscaped("else")),r); :};
+
+cases ::= _case:c SEMI cases:ca {:
+			ca.add(0,c);
+			RESULT = ca;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
 
 empty ::= ;

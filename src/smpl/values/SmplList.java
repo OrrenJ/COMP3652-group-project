@@ -2,7 +2,6 @@ package smpl.values;
 
 import smpl.sys.SmplException;
 import static smpl.values.SmplValue.make;
-import java.util.*;
 
 public class SmplList extends SmplPair {
 

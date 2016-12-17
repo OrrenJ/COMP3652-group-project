@@ -64,6 +64,14 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 
 	}
 
+	public static SmplVector makeVector(ArrayList<SmplValue<?>> v){
+		return new SmplVector(v);
+	}
+
+	public static SmplSubVector makeSubVector(SmplInt size, SmplProcedure proc){
+		return new SmplSubVector(size,proc);
+	}
+
 	// return the type of a value
 	public abstract SmplType getType();
 

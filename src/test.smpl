@@ -162,17 +162,55 @@ println("call(otherProc, list(\"try\" + \" this\", 2 ^ 4, #t or #f, #c_)): " + c
 
 println(">>> End of Proc tests <<<\n");
 
+// vector
+
+println(">>> Vector tests <<<");
+
+vec1 := [: 1, 2, 3, 4 :];
+vec2 := [: x, 4: proc(n) "#" + (10 - n), #t, 3 :];
+vec3 := [: x, 4: proc() "filler", #t, 3 :];
+
+println("[: 1, 2, 3, 4 :]: " + vec1);
+println("[: x, 4: proc(n) \"#\" + (10 - n), #t, 3 :]: " + vec2);
+println("[: x, 4: proc() \"filler\", #t, 3 :]: " + vec3);
+
+println("size(vec1): " + size(vec1));
+println("size(vec2): " + size(vec2));
+println("size(vec3): " + size(vec3));
+
+println("vec1[0]: " + vec1[0]);
+println("vec2[size(vec1)]: " + vec2[size(vec1)]);
+println("vec3[4 / 2]: " + vec3[4 / 2]);
+
+println(">>> End of Vector tests <<<\n");
+
 // if
 
 println(">>> If tests <<<");
 
 print("if 5 ^ 3 < 100 then print(\"foo\") else print(\"bar\"): ");
 
-if 5 ^ 3 < 100 then println("foo") else println("bar");
+if 5 ^ 3 < 100 
+then println("foo");
+else println("bar");
 
 print("if 2 ^ 4 = 4 ^ 2 then print(\"foo\") else print(\"bar\"): ");
 
-if 2 ^ 4 = 4 ^ 2 then println("foo") else println("bar");
+someStr := "test";
+
+if 2 ^ 4 = 4 ^ 2 
+then someStr := "foo";
+else someStr := "bar";
+
+println(someStr);
+
+// cascading ifs
+
+if not #t
+then println("first if case");
+else if #f
+then println("second if case");
+else println("else case");
 
 println(">>> End of If tests <<<\n");
 
@@ -190,3 +228,19 @@ println("readint: " + ri);
 
 println(">>> End of Read tests <<<\n");
 
+// case
+
+println(">>> Case tests <<<");
+
+print("Enter a number between 1 and 10 << ");
+
+num := readint();
+
+case {
+	num < 5 and num >= 1 : println("number is less than 5");
+	num > 5 and num <= 10 : println("number is greater than 5");
+	num = 5 : println("number is 5");
+	else : println("number is out of range");
+}
+
+println(">>> End of Case tests <<<\n");

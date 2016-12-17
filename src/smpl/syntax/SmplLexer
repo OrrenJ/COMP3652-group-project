@@ -67,11 +67,7 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 //"	// comment stop Java IDE from showing rest of code as if it's inside quotes
 
-any = .|{ws}
-
 comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
-
-keywords = "substr";
 
 %%
 
@@ -116,7 +112,10 @@ keywords = "substr";
 <YYINITIAL> ","	{return new Symbol(sym.COMMA);}
 <YYINITIAL> "."	{return new Symbol(sym.PERIOD);}
 <YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
+<YYINITIAL> ":"	{return new Symbol(sym.COLON);}
 <YYINITIAL> "@"	{return new Symbol(sym.LSTCONCAT);}
+<YYINITIAL> "[:"	{return new Symbol(sym.LVEC);}
+<YYINITIAL> ":]"	{return new Symbol(sym.RVEC);}
 
 // KETWORDS
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
@@ -129,6 +128,7 @@ keywords = "substr";
 
 <YYINITIAL> "#e"	{return new Symbol(sym.EMPTYLIST);}
 <YYINITIAL> "list" 	{return new Symbol(sym.LIST);}
+<YYINITIAL> "size" 	{return new Symbol(sym.SIZE);}
 <YYINITIAL> "substr"	{return new Symbol(sym.SUBSTR);}
 
 <YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}

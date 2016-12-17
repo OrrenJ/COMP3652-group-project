@@ -12,6 +12,8 @@ public enum SmplType {
 	STRING("string"),
 	PAIR("pair"),
 	LIST("list"),
+	VECTOR("vector"),
+	SUBVECTOR("subvector"),
 	EMPTYLIST("nil"),
 	PROCEDURE("user function");
 

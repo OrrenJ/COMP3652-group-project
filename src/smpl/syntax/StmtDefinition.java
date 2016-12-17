@@ -5,7 +5,7 @@ import smpl.syntax.Exp;
 import smpl.sys.SmplException;
 import java.util.*;
 
-public class StmtDefinition extends Statement {
+public class StmtDefinition extends Exp {
 
 	ArrayList<String> vars;
 	ArrayList<Exp> exps;

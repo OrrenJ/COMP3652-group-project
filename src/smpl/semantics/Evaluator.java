@@ -218,6 +218,95 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	}
 
 	@Override
+	public SmplValue<?> visitExpVector(ExpVector exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		ArrayList<Exp> lst = exp.getList();
+		ArrayList<SmplValue<?>> vals = new ArrayList();
+
+		for(Exp e : lst){
+			result = e.visit(this, env);
+			if(result.getType() == SmplType.SUBVECTOR){
+				int size = ((SmplSubVector)result).getSizeInt();
+				SmplProcedure proc = ((SmplSubVector)result).getProcedure();
+				ExpProcedure procExp = proc.getProcExp();
+				// get parameters and expression body
+				ArrayList<String> params = new ArrayList(procExp.getParameters());
+				if(params.size() > 1 || procExp.getListVar() != null)
+					throw new SmplException("Procedure must have 1 or no parameters.");
+				Exp body = procExp.getBody();
+				// evaluate for 0 through size
+				for(int i=0; i<size; i++){
+					ArrayList<SmplInt> args = new ArrayList();
+					args.add(SmplValue.make(i));
+					Environment<SmplValue<?>> newEnv = new Environment(params, args, env);
+					vals.add(body.visit(this,newEnv));
+				}
+			} else {
+				vals.add(e.visit(this, env));
+			}
+		}
+
+		return SmplValue.makeVector(vals);
+	}
+
+	@Override
+	public SmplValue<?> visitExpVectorRef(ExpVectorRef exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp ref = exp.getRef();
+		result = ref.visit(this, env);
+
+		if(result.getType() != SmplType.INTEGER && result.getType() != SmplType.REAL)
+			throw new TypeSmplException(SmplType.INTEGER, result.getType());
+
+		int _ref = result.intValue();
+
+		String var = exp.getVar();
+		SmplValue<?> val = env.get(var);
+
+		if(val.getType() != SmplType.VECTOR)
+			throw new TypeSmplException(SmplType.VECTOR, result.getType());
+
+		ArrayList<SmplValue<?>> lst = ((SmplVector)val).getList();
+
+		return lst.get(_ref);
+	}
+
+	@Override
+	public SmplValue<?> visitExpSize(ExpSize exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp body = exp.getBody();
+		result = body.visit(this, env);
+
+		if(result.getType() != SmplType.VECTOR)
+			throw new TypeSmplException(SmplType.VECTOR, result.getType());
+
+		ArrayList<SmplValue<?>> lst = ((SmplVector)result).getList();
+
+		return SmplValue.make(lst.size());
+	}
+
+	@Override
+	public SmplValue<?> visitExpSubVector(ExpSubVector exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		SmplInt size;
+		SmplProcedure proc;
+
+		result = exp.getSize().visit(this, env);
+		if(result.getType() == SmplType.INTEGER)
+			size = (SmplInt) result;
+		else
+			throw new TypeSmplException(SmplType.INTEGER, result.getType());
+
+		result = exp.getProcedure().visit(this,env);
+		if(result.getType() == SmplType.PROCEDURE)
+			proc = (SmplProcedure) result;
+		else
+			throw new TypeSmplException(SmplType.PROCEDURE, result.getType());
+
+		return SmplValue.makeSubVector(size,proc);
+	}
+
+	@Override
 	public SmplValue<?> visitExpPairCheck(ExpPairCheck exp, Environment<SmplValue<?>> env) throws SmplException {
 		Exp toCheck = exp.getExp();
 		result = toCheck.visit(this, env);
@@ -657,5 +746,38 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		return result;
 
+	}
+
+	@Override
+	public SmplValue<?> visitExpCase(ExpCase exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		// get cases
+		ArrayList<ExpPair> lst = exp.getList();
+		Exp elseCond = null;
+		// examine each case
+		for(ExpPair _case : lst){
+			Exp cond = _case.getExpL();
+			result = cond.visit(this, env);
+			// skip evaluation for else condition
+			if(result.getType() == SmplType.STRING){
+				if(result.stringValue().equals("else")){
+					elseCond = _case.getExpR();
+					continue;
+				}
+			}
+			// check condition is booleans
+			if(result.getType() != SmplType.BOOLEAN)
+				throw new TypeSmplException(SmplType.BOOLEAN, result.getType());
+
+			if(result.boolValue()){
+				Exp body = _case.getExpR();
+				return body.visit(this, env);
+			}
+		}
+		// true case has not been found
+		if(elseCond != null)
+			return elseCond.visit(this, env);
+		// return false if no true case and no else case
+		return SmplValue.make(false);
 	}
 }
