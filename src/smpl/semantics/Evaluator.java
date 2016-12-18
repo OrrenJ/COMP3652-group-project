@@ -43,19 +43,49 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitStmtDefinition(StmtDefinition sd, Environment<SmplValue<?>> env) throws SmplException{
-		ArrayList<Exp> args = sd.getExps();
-		ArrayList<String> vars = sd.getVars();
 
-		int a_size = args.size();
-		int v_size = vars.size();
+		if(sd.getVectorReference() == null){
+			// assign values to variables
+			ArrayList<Exp> args = sd.getExps();
+			ArrayList<String> vars = sd.getVars();
 
-		if(a_size != v_size)
-			throw new SmplException("Must assign same number of expressions as variables");
+			int a_size = args.size();
+			int v_size = vars.size();
 
-		for(int i=0; i<a_size; i++)
-			env.put(vars.get(i), args.get(i).visit(this, env));
+			if(a_size != v_size)
+				throw new SmplException("Must assign same number of expressions as variables");
 
-		return result;
+			for(int i=0; i<a_size; i++)
+				env.put(vars.get(i), args.get(i).visit(this, env));
+		} else {
+			// assign value to vector position
+			// get vector reference
+			ExpVectorRef vr = sd.getVectorReference();
+			// get value to assign
+			Exp val = sd.getExp();
+			// get vector and position
+			String vecVar = vr.getVar();
+			Exp ref = vr.getRef();
+			result = ref.visit(this, env);
+			// confirm vector position is int
+			if(result.getType() != SmplType.INTEGER && result.getType() != SmplType.REAL)
+				throw new TypeSmplException(SmplType.INTEGER, result.getType());
+			// get ref as int
+			int _ref = result.intValue();
+			// get vector
+			SmplValue<?> vec = env.get(vecVar);
+			// confirm vector type
+			if(vec.getType() != SmplType.VECTOR)
+				throw new TypeSmplException(SmplType.VECTOR, vec.getType());
+			// get list from vector class
+			ArrayList<SmplValue<?>> lst = ((SmplVector)vec).getList();
+			if(_ref < 0 || _ref >= lst.size())
+				throw new SmplException("Reference to index [" + _ref + "] outside of bounds of " + vecVar + "[" + lst.size() + "]");
+			lst.set(_ref, val.visit(this, env));
+
+		}
+
+		return SmplValue.make(true);
 	}
 
 	@Override
@@ -264,9 +294,12 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		SmplValue<?> val = env.get(var);
 
 		if(val.getType() != SmplType.VECTOR)
-			throw new TypeSmplException(SmplType.VECTOR, result.getType());
+			throw new TypeSmplException(SmplType.VECTOR, val.getType());
 
 		ArrayList<SmplValue<?>> lst = ((SmplVector)val).getList();
+
+		if(_ref < 0 || _ref >= lst.size())
+				throw new SmplException("Reference to index [" + _ref + "] outside of bounds of " + var + "[" + lst.size() + "]");
 
 		return lst.get(_ref);
 	}
@@ -757,27 +790,28 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		// examine each case
 		for(ExpPair _case : lst){
 			Exp cond = _case.getExpL();
-			result = cond.visit(this, env);
+			SmplValue<?> check = cond.visit(this, env);
 			// skip evaluation for else condition
-			if(result.getType() == SmplType.STRING){
-				if(result.stringValue().equals("else")){
+			if(check.getType() == SmplType.STRING){
+				if(check.stringValue().equals("else")){
 					elseCond = _case.getExpR();
 					continue;
 				}
 			}
 			// check condition is booleans
-			if(result.getType() != SmplType.BOOLEAN)
-				throw new TypeSmplException(SmplType.BOOLEAN, result.getType());
+			if(check.getType() != SmplType.BOOLEAN)
+				throw new TypeSmplException(SmplType.BOOLEAN, check.getType());
 
-			if(result.boolValue()){
+			if(check.boolValue()){
 				Exp body = _case.getExpR();
-				return body.visit(this, env);
+				result = body.visit(this, env);
+				return result;
 			}
 		}
 		// true case has not been found
 		if(elseCond != null)
-			return elseCond.visit(this, env);
-		// return false if no true case and no else case
-		return SmplValue.make(false);
+			result = elseCond.visit(this, env);
+		// return value stored in result
+		return result;
 	}
 }

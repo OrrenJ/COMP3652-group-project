@@ -1,0 +1,92 @@
+// procedure to recursively mimic for loop behaviour
+// repeats exp c times where exp is a procedure
+def for proc(c, exp){
+	if c > 0
+	then {
+		exp();
+		for(c - 1, exp);
+	};
+};
+
+// procedure to recursively mimic while loop behaviour
+// repeats exp for v until cond is false for v
+// exp is an procedure to be repeated
+// cond is a procedure that returns true or false
+def while proc(v, cond, exp){
+	if cond(v)
+	then {
+		v := exp(v);
+		while(v, cond, exp);
+	};
+	v; // return last value of v
+};
+
+def swap proc(vec, i, j){
+	temp := vec[i];
+	vec[i] := vec[j];
+	vec[j] := temp;
+};
+
+def partition proc(vec, p, start, end){
+	lo := start;
+	hi := end - 2;
+	pv := vec[p];
+	swap(vec, p, end - 1);
+
+	// trackers for while loop
+	lohi := [: lo, hi :];
+	def cond proc(lohi){
+		lohi[0] < lohi[1];
+	};
+	def doThis proc(lohi){
+		if vec[lohi[0]] < pv
+		then lohi[0] := lohi[0] + 1;
+		else if vec[lohi[1]] >= pv
+		then lohi[1] := lohi[1] - 1;
+		else swap(vec, lohi[0], lohi[1]);
+		lohi;
+	};
+	lohi := while(lohi, cond, doThis);
+	idx := lohi[1];
+
+	if vec[lohi[1]] < pv
+	then idx := idx + 1;
+
+	swap(vec, end - 1, idx);
+
+	idx;
+};
+
+def quicksort proc(vec, start, end, part) { 
+	// stop clause
+	if end - start < 2
+	then 0;
+	else {		
+		p := start + ((end - start) / 2);
+		p := part(vec, p, start, end);
+
+		quicksort(vec, start, p);
+		quicksort(vec, p + 1, end);
+	};
+};
+
+vec1 := [: 55, 38, 112, -15, 0, 1, -5, 42, 256 :];
+vec2 := [: #ch, #ce, #cl, #cl, #co, #c0020, #cw, #co, #cr, #cl, #cd, #c. :];
+vec3 := [: "the", "couch", "is", "full", "of", "potatoes" :];
+vec4 := [: #c0063, #c0061, #c0062, #x63, #x61, #x62 :];
+
+println("Vector 1 (unsorted): " + vec1);
+quicksort(vec1, 0, size(vec1), partition);
+println("Vector 1 (sorted): " + vec1);
+
+println("Vector 2 (unsorted): " + vec2);
+quicksort(vec2, 0, size(vec2), partition);
+println("Vector 2 (sorted): " + vec2);
+
+println("Vector 3 (unsorted): " + vec3);
+quicksort(vec3, 0, size(vec3), partition);
+println("Vector 3 (sorted): " + vec3);
+
+println("Vector 4 (unsorted): " + vec4);
+quicksort(vec4, 0, size(vec4), partition);
+println("Vector 4 (sorted): " + vec4);

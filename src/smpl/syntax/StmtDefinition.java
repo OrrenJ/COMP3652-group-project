@@ -10,9 +10,17 @@ public class StmtDefinition extends Exp {
 	ArrayList<String> vars;
 	ArrayList<Exp> exps;
 
+	ExpVectorRef vr;
+	Exp r;
+
 	public StmtDefinition(ArrayList<String> ids, ArrayList<Exp> e) {
 		vars = ids;
 		exps = e;
+	}
+
+	public StmtDefinition(ExpVectorRef vr, Exp r) {
+		this.vr = vr;
+		this.r = r;
 	}
 
 	public ArrayList<String> getVars(){
@@ -23,6 +31,14 @@ public class StmtDefinition extends Exp {
 		return exps;
 	}
 
+	public ExpVectorRef getVectorReference(){
+		return vr;
+	}
+
+	public Exp getExp(){
+		return r;
+	}
+
 	@Override
 	public <S, T> T visit(Visitor<S, T> v, S arg) throws SmplException {
 		return v.visitStmtDefinition(this, arg);
@@ -30,6 +46,9 @@ public class StmtDefinition extends Exp {
 
 	@Override
 	public String toString() {
-		return String.format("%s := %s", vars, exps.toString());
+		if(vr != null)
+			return String.format("%s := %s", vr.toString(), r.toString());
+		else
+			return String.format("%s := %s", vars, exps.toString());
 	}
 }

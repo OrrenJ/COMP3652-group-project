@@ -106,7 +106,7 @@ non terminal Exp substr;
 
 non terminal Exp list;
 non terminal Exp vector;
-non terminal Exp vectorRef;
+non terminal ExpVectorRef vectorRef;
 non terminal Exp size;
 
 non terminal ExpProcedure procExp;
@@ -178,6 +178,8 @@ stmt ::= definition:d SEMI {: RESULT = d; :} |
 
 definition ::= params:p ASSIGN args:a {:
 				RESULT = new StmtDefinition(p, a); 
+			:} | vectorRef:v ASSIGN expression:e {:
+				RESULT = new StmtDefinition(v,e);
 			:};
 
 print ::= PRINT LPAREN expression:e RPAREN {:
