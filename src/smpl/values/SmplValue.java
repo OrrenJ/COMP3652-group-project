@@ -53,6 +53,23 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public static SmplString makeStrEscaped(String v){
 		return new SmplString(SmplString.escape(v));
 	}
+/*
+	public static SmplPair makePair(SmplValue<?> val1, SmplList val2){
+			return new SmplList(val1, (SmplList)val2);
+
+	}
+
+	public static SmplPair makePair(SmplValue<?> val1, SmplPair val2){
+			return new SmplList(val1, (SmplList)val2);
+	}
+*/
+	public static SmplPair makePair(SmplValue<?> val1, SmplValue<?> val2){
+			return new SmplPair(val1, val2);
+	}
+
+	public static SmplList makeList(SmplValue<?> val1, SmplList val2){
+		return new SmplList(val1, val2);
+	}
 
 	public static SmplList makeList(ArrayList<SmplValue<?>> v){
 

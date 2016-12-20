@@ -58,7 +58,7 @@ terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COL
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
 
 // bitwise opertors
-terminal BAND, BOR, BNOT, LET;
+terminal BAND, BOR, BNOT;
 
 // relational operators
 terminal EQ, GT, LT, LE, GE, NEQ;
@@ -71,7 +71,7 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
-terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE;
+terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
 
 // terminals with values
 terminal Integer INTEGER;
@@ -109,6 +109,7 @@ non terminal Exp vector;
 non terminal ExpVectorRef vectorRef;
 non terminal Exp size;
 
+non terminal AbstractMap.Entry<String,ArrayList<String>> procHead;
 non terminal ExpProcedure procExp;
 non terminal ArrayList<String> params;
 non terminal ArrayList<String> paramsAux;
@@ -152,6 +153,7 @@ non terminal Exp expElse;
 non terminal Exp expCase;
 non terminal ExpPair _case;
 non terminal ArrayList<ExpPair> cases;
+non terminal ArrayList<ExpPair> casesAux;
 
 non terminal Exp concatList;
 
@@ -172,9 +174,8 @@ stmtList ::= stmtList:lst stmt:s {:
 			:};
 
 stmt ::= definition:d SEMI {: RESULT = d; :} |
-			expIf:e {: RESULT = e; :} |
-			expCase:c {: RESULT = c; :} |
-			expression:e SEMI {: RESULT = e; :};
+			expression:e SEMI {: RESULT = e; :} |
+			def:d {: RESULT = d; :};
 
 definition ::= params:p ASSIGN args:a {:
 				RESULT = new StmtDefinition(p, a); 
@@ -188,18 +189,21 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 				RESULT = new StmtPrint(e, '\n'); 
 			:};
 
-expression ::= letStmt:l {: RESULT = l; :} |
+expression ::= expCase:c {: RESULT = c; :} |
+				letStmt:l {: RESULT = l; :} |
 				print:p {: RESULT = p; :} |
+				expIf:e {: RESULT = e; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
-				arithExp:a {: RESULT = a; :}|
-				def:d {: RESULT = d; :};
+				arithExp:a {: RESULT = a; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
 			:};
 
 binding ::= VARIABLE:v EQ expression:e {:
+				RESULT = new Binding(v, e);
+			:} | VARIABLE:v BE expression:e {:
 				RESULT = new Binding(v, e);
 			:};
 
@@ -215,14 +219,18 @@ bindingsAux ::= COMMA binding:b bindingsAux:bl {:
 				:} |
 			empty {: RESULT = new ArrayList(); :};
 
-procExp ::= PROC LPAREN params:ps RPAREN expression:body {:
-				RESULT = new ExpProcedure(ps, body);
+procHead ::= PROC LPAREN params:ps RPAREN {:
+				RESULT = new AbstractMap.SimpleEntry(null,ps);
 			:} |
-			PROC LPAREN params:ps PERIOD VARIABLE:v RPAREN expression:body {:
-				RESULT = new ExpProcedure(ps, body, v);
+			PROC LPAREN params:ps PERIOD VARIABLE:v RPAREN {:
+				RESULT = new AbstractMap.SimpleEntry(v,ps);
 			:} |
-			PROC VARIABLE:v expression:body {:
-				RESULT = new ExpProcedure(body, v);
+			PROC VARIABLE:v {:
+				RESULT = new AbstractMap.SimpleEntry(v,null);
+			:};
+
+procExp ::= procHead:h expression:body {:
+				RESULT = new ExpProcedure(h.getValue(), body, h.getKey());
 			:};
 
 params ::= VARIABLE:v paramsAux:pl {:
@@ -239,7 +247,9 @@ paramsAux ::= COMMA VARIABLE:v paramsAux:pl {:
 				RESULT = new ArrayList();
 			:};
 
-procCallExp ::= VARIABLE:v LPAREN args:a RPAREN {:
+procCallExp ::= LPAREN expression:e RPAREN LPAREN args:a RPAREN {:
+				RESULT = new ExpProcedureCall(e, a);
+			:} | VARIABLE:v LPAREN args:a RPAREN {:
 				RESULT = new ExpProcedureCall(v, a);
 			:};
 
@@ -409,7 +419,7 @@ equal ::= EQUAL LPAREN expression:a COMMA expression:b RPAREN {:
 		RESULT = new ExpEqual(a,b);
 	:};	
 
-def ::= DEF VARIABLE:v expression:e {:
+def ::= DEF VARIABLE:v stmt:e {:
 		RESULT = new ExpDef(v,e); 
 	:};
 
@@ -445,11 +455,11 @@ readint ::= READINT LPAREN RPAREN {:
 		RESULT = new ExpReadInt();
 	:};
 
-expIf ::= IF expression:con THEN stmt:ifArg expElse:elseArg{:
+expIf ::= IF expression:con THEN expression:ifArg expElse:elseArg{:
 		RESULT = new ExpIf(con, ifArg, elseArg);
 	:};
 
-expElse ::= ELSE stmt:elseArg {:
+expElse ::= ELSE expression:elseArg {:
 		RESULT = elseArg;
 	:} | empty {:
 		RESULT = null;
@@ -464,7 +474,14 @@ _case ::= expression:c COLON expression:r {:
 		:} | ELSE COLON expression:r {:
 			RESULT = new ExpPair(new ExpLit(SmplValue.makeStrEscaped("else")),r); :};
 
-cases ::= _case:c SEMI cases:ca {:
+cases ::= _case:c casesAux:ca {:
+			ca.add(0,c);
+			RESULT = ca;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+casesAux ::= COMMA _case:c casesAux:ca {:
 			ca.add(0,c);
 			RESULT = ca;
 		:} | empty {:

@@ -67,7 +67,11 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 //"	// comment stop Java IDE from showing rest of code as if it's inside quotes
 
-comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
+any = .|{ws}
+
+mini_comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
+
+comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\/)|(\/\/.*)
 
 %%
 
@@ -119,6 +123,7 @@ comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
 
 // KETWORDS
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
+<YYINITIAL> "be"	{return new Symbol(sym.BE);}
 <YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
 
 <YYINITIAL> "pair?"	{return new Symbol(sym.PAIRCHECK);}
@@ -189,7 +194,7 @@ comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
 <YYINITIAL> "#t" {return new Symbol(sym.BOOL, true);}
 <YYINITIAL> "#f" {return new Symbol(sym.BOOL, false);}
 
-<YYINITIAL> {alpha}{varchars}* {
+<YYINITIAL> {varchars}* {
 				// VARIABLE
 				return new Symbol(sym.VARIABLE, yytext());
 			}

@@ -185,10 +185,24 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		// create copy of parameters since we will be manipulating this list
 		ArrayList<Exp> args = new ArrayList(exp.getArguments());
-		String id = exp.getVar();
 
-		SmplProcedure proc = (SmplProcedure) env.get(id);
+		// get ExpProcedure instance
+		SmplProcedure proc;
+		// check if variable reference or explicit procedure declaration
+		if(exp.getVar() != null){
+			String id = exp.getVar();
+			proc = (SmplProcedure) env.get(id);
+		} else {
+			Exp toEval = exp.getProcExp();
+			result = toEval.visit(this, env);
+			if(result.getType() != SmplType.PROCEDURE)
+				throw new TypeSmplException(SmplType.PROCEDURE, result.getType());
+			else
+				proc = (SmplProcedure) result;
+		}
+
 		ExpProcedure procExp = proc.getProcExp();
+		Environment _env = proc.getClosingEnv();
 
 		// create copy of parameters since we will be manipulating this list
 		ArrayList<String> params = new ArrayList(procExp.getParameters());
@@ -224,7 +238,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			vals.add(SmplValue.makeList(extras));
 		}
 
-		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, env);
+		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, _env);
 
 		return body.visit(this, newEnv);
 	}
@@ -233,7 +247,10 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	public SmplValue<?> visitExpPair(ExpPair exp, Environment<SmplValue<?>> env) throws SmplException {
 		SmplValue<?> v1 = exp.getExpL().visit(this, env);
 		SmplValue<?> v2 = exp.getExpR().visit(this, env);
-		return new SmplPair(v1, v2);
+		if(v2.getType() == SmplType.LIST || v2.getType() == SmplType.EMPTYLIST)
+			return SmplValue.makeList(v1,(SmplList)v2);
+		else
+			return SmplValue.makePair(v1, v2);
 	}
 
 	@Override
@@ -345,7 +362,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		result = toCheck.visit(this, env);
 		SmplType type = result.getType();
 
-		return new SmplBool(type == SmplType.PAIR);
+		return new SmplBool(type == SmplType.PAIR || type == SmplType.LIST || type == SmplType.EMPTYLIST);
 	}
 
 	@Override
@@ -356,6 +373,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		if(type == SmplType.PAIR)
 			return ((SmplPair)result).getFirstValue();
+		else if(type == SmplType.LIST || type == SmplType.EMPTYLIST)
+			return ((SmplList)result).getFirstValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -368,6 +387,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		if(type == SmplType.PAIR)
 			return ((SmplPair)result).getSecondValue();
+		else if(type == SmplType.LIST || type == SmplType.EMPTYLIST)
+			return ((SmplList)result).getSecondValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -795,7 +816,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			if(check.getType() == SmplType.STRING){
 				if(check.stringValue().equals("else")){
 					elseCond = _case.getExpR();
-					continue;
+					break;
 				}
 			}
 			// check condition is booleans

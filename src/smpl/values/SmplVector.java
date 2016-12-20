@@ -42,14 +42,14 @@ public class SmplVector extends SmplValue<SmplVector> {
 
 	@Override
 	public String toString() {
-		String vals = "[";
+		String vals = "[:";
 		for(int i=0; i<lst.size()-1; i++)
-			vals += lst.get(i) + " ";
+			vals += lst.get(i) + ", ";
 
 		if(!lst.isEmpty())
 			vals += lst.get(lst.size()-1);
 
-		vals += "]";
+		vals += ":]";
 
 		return vals;
 	}

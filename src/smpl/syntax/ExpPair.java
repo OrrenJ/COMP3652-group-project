@@ -27,7 +27,7 @@ public class ExpPair extends Exp {
 
   @Override
   public String toString() {
-    return "Pair: <" + exp1.toString() + ", " + exp2.toString() + ">";
+    return "(" + exp1.toString() + " . " + exp2.toString() + ")";
   }
 }
 
