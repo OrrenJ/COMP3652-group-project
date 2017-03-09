@@ -195,4 +195,12 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public SmplProcedure procValue() throws TypeSmplException {
 		throw new TypeSmplException(SmplType.PROCEDURE, getType());
 	}
+
+	public SmplVector vectorValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.VECTOR, getType());
+	}
+
+	public SmplList listValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.LIST, getType());
+	} 
 }

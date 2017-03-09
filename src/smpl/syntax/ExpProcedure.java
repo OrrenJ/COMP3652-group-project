@@ -7,6 +7,7 @@ import java.util.*;
 public class ExpProcedure extends Exp {
 
   ArrayList<String> params;
+  ArrayList<Exp> exps;
   Exp body;
   String listvar;
 
@@ -28,12 +29,30 @@ public class ExpProcedure extends Exp {
     this.listvar = listvar;
   }
 
+  public ExpProcedure(ArrayList<String> params, ArrayList<Exp> exps){
+    this(params, exps, null);
+  }
+
+  public ExpProcedure(ArrayList<Exp> exps, String listvar){
+    this(new ArrayList(), exps, listvar);
+  }
+
+  public ExpProcedure(ArrayList<String> params, ArrayList<Exp> exps, String listvar){
+    this.params = params;
+    this.exps = exps;
+    this.listvar = listvar;
+  }
+
   public ArrayList<String> getParameters(){
     return params;
   }
 
   public Exp getBody(){
     return body;
+  }
+
+  public ArrayList<Exp> getExpressions(){
+    return exps;
   }
 
   public String getListVar(){

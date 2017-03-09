@@ -60,8 +60,8 @@ public class Repl {
 		    	Object result;
 				result = program.visit(interp, env);
 				// uncomment the following line to automatically print the result of the last expression
-				//System.out.println("\nResult: " + result);
-				//System.out.println("");		// new line at end of output
+				System.out.println("\nResult: " + result);
+				System.out.println("");		// new line at end of output
 		    } catch (SmplException e) {
 				System.out.println(e.getMessage());
 		    }

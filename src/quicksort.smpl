@@ -38,6 +38,7 @@ def partition proc(vec, p, start, end){
 	def cond proc(lohi){
 		lohi[0] < lohi[1];
 	};
+	// procedure to repeat
 	def doThis proc(lohi){
 		if vec[lohi[0]] < pv
 		then { lohi[0] := lohi[0] + 1; }
@@ -46,49 +47,64 @@ def partition proc(vec, p, start, end){
 		else swap(vec, lohi[0], lohi[1]);
 		lohi;
 	};
+
 	lohi := while(lohi, cond, doThis);
 	idx := lohi[1];
 
-	if vec[lohi[1]] < pv
+	if vec[idx] < pv
 	then { idx := idx + 1; };
 
 	swap(vec, end - 1, idx);
 
+	// return new pivot
 	idx;
 };
 
-def quicksort proc(vec, start, end) { 
+def q_sort proc(vec, start, end) { 
 	// stop clause
 	if end - start < 2
 	then { 0; }
 	else {		
+		// use midpoint as pivot
 		p := start + ((end - start) / 2);
 		p := partition(vec, p, start, end);
 
-		quicksort(vec, start, p);
-		quicksort(vec, p + 1, end);
+		q_sort(vec, start, p);
+		q_sort(vec, p + 1, end);
 	};
 
 	vec;
+};
+
+def quicksort proc(vec) {
+	q_sort(vec, 0, size(vec));
 };
 
 vec1 := [: 55, 38, 112, -15, 0, 1, -5, 42, 256 :];
 vec2 := [: #ch, #ce, #cl, #cl, #co, #c0020, #cw, #co, #cr, #cl, #cd, #c. :];
 vec3 := [: "the", "couch", "is", "full", "of", "potatoes" :];
 vec4 := [: #c0063, #c0061, #c0062, #x63, #x61, #x62 :];
+vec5 := [: "this", "is", #ca, "test", "of", 1, "or", "more", "types" :];
 
 println("Vector 1 (unsorted): " + vec1);
-vec1_s := quicksort(vec1, 0, size(vec1));
+vec1_s := quicksort(vec1);
 println("Vector 1 (sorted): " + vec1_s);
 
 println("Vector 2 (unsorted): " + vec2);
-vec2_s := quicksort(vec2, 0, size(vec2));
+vec2_s := quicksort(vec2);
 println("Vector 2 (sorted): " + vec2_s);
 
 println("Vector 3 (unsorted): " + vec3);
-vec3_s := quicksort(vec3, 0, size(vec3));
+vec3_s := quicksort(vec3);
 println("Vector 3 (sorted): " + vec3_s);
 
 println("Vector 4 (unsorted): " + vec4);
-vec4_s := quicksort(vec4, 0, size(vec4));
+vec4_s := quicksort(vec4);
 println("Vector 4 (sorted): " + vec4_s);
+
+// comparison between string and int not supported
+/*
+println("Vector 5 (unsorted): " + vec5);
+vec5_s := quicksort(vec5);
+println("Vector 5 (sorted): " + vec5_s);
+*/

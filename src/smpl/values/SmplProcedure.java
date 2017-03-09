@@ -55,7 +55,13 @@ public class SmplProcedure extends SmplValue<SmplProcedure> {
 		if(listvar != null)
 			params += " . " + listvar;
 
-		String body = procExp.getBody().toString();
+		String body;
+
+		if(procExp.getBody() != null)
+			body = procExp.getBody().toString();
+		else
+			body = procExp.getExpressions().toString();
+
 		return "[Procedure: (" + params + ") -> " + body + "]";
 	}
 }

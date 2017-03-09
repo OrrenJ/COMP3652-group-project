@@ -17,6 +17,11 @@ public class SmplVector extends SmplValue<SmplVector> {
 		return SmplType.VECTOR;
 	}
 
+	@Override
+	public SmplVector vectorValue(){
+		return this;
+	}
+
 	public ArrayList<SmplValue<?>> getList(){
 		return lst;
 	}

@@ -161,7 +161,7 @@ non terminal empty;
 
 /* Grammar rules */
 
-precedence left COLON, ELSE;
+precedence left COLON, ELSE, RPAREN;
 
 program ::= stmtList:s {: RESULT = new SmplProgram(s); :};
 
@@ -231,6 +231,8 @@ procHead ::= PROC LPAREN params:ps RPAREN {:
 
 procExp ::= procHead:h expression:body {:
 				RESULT = new ExpProcedure(h.getValue(), body, h.getKey());
+			:} | procHead:h LPAREN args:a RPAREN {:
+				RESULT = new ExpProcedure(h.getValue(), a, h.getKey());
 			:};
 
 params ::= VARIABLE:v paramsAux:pl {:

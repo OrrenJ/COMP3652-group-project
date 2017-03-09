@@ -52,11 +52,24 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			int a_size = args.size();
 			int v_size = vars.size();
 
-			if(a_size != v_size)
+			if(a_size == 1 && v_size != 1){
+				Exp e = args.get(0);
+				result = e.visit(this,env);
+				if(result.getType() == SmplType.LIST){
+					SmplList l = result.listValue();
+					for(int i=0; i<v_size; i++){
+						if(l.getNextValue() != null){
+							env.put(vars.get(i), l.getCurrentValue());
+							l = l.getNextValue();
+						}
+					}
+				}
+			} else if(a_size != v_size){
 				throw new SmplException("Must assign same number of expressions as variables");
-
-			for(int i=0; i<a_size; i++)
-				env.put(vars.get(i), args.get(i).visit(this, env));
+			} else {
+				for(int i=0; i<a_size; i++)
+					env.put(vars.get(i), args.get(i).visit(this, env));
+			}
 		} else {
 			// assign value to vector position
 			// get vector reference
@@ -240,7 +253,18 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, _env);
 
-		return body.visit(this, newEnv);
+		if(body == null){
+			ArrayList<Exp> expList = procExp.getExpressions();
+			ArrayList<SmplValue<?>> vlist = new ArrayList();
+			if(expList == null)
+				throw new SmplException("Procedure body not found.");
+			for(Exp e : expList)
+				vlist.add(e.visit(this, newEnv));
+			return SmplValue.makeList(vlist);
+		} else {
+			return body.visit(this, newEnv);
+		}
+
 	}
 
 	@Override

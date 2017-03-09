@@ -18,6 +18,11 @@ public class SmplList extends SmplPair {
 		return SmplType.LIST;
 	}
 
+	@Override
+	public SmplList listValue(){
+		return this;
+	}
+
 	public SmplValue<?> getCurrentValue(){
 		return getFirstValue();
 	}

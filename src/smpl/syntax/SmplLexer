@@ -86,8 +86,8 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL>	{ws}"-"{ws}	{return new Symbol(sym.MINUS);}
 <YYINITIAL> "-"			{return new Symbol(sym.NEG);}
 <YYINITIAL>	{ws}"*"{ws}	{return new Symbol(sym.MUL);}
-<YYINITIAL>	{ws}"/"{ws}	{return new Symbol(sym.DIV);}
-<YYINITIAL>	{ws}"%"{ws}	{return new Symbol(sym.MOD);}
+<YYINITIAL>	"/"	{return new Symbol(sym.DIV);}
+<YYINITIAL>	"%"	{return new Symbol(sym.MOD);}
 <YYINITIAL>	{ws}"^"{ws}	{return new Symbol(sym.POW);}
 
 <YYINITIAL> {ws}":="{ws}	{return new Symbol(sym.ASSIGN);}
