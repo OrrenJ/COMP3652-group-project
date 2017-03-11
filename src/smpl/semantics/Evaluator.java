@@ -4,6 +4,7 @@ import smpl.syntax.*;
 import smpl.sys.SmplException;
 import smpl.values.*;
 import java.util.*;
+import java.lang.Math;
 
 public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?>> {
 
@@ -43,19 +44,62 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 	@Override
 	public SmplValue<?> visitStmtDefinition(StmtDefinition sd, Environment<SmplValue<?>> env) throws SmplException{
-		ArrayList<Exp> args = sd.getExps();
-		ArrayList<String> vars = sd.getVars();
 
-		int a_size = args.size();
-		int v_size = vars.size();
+		if(sd.getVectorReference() == null){
+			// assign values to variables
+			ArrayList<Exp> args = sd.getExps();
+			ArrayList<String> vars = sd.getVars();
 
-		if(a_size != v_size)
-			throw new SmplException("Must assign same number of expressions as variables");
+			int a_size = args.size();
+			int v_size = vars.size();
 
-		for(int i=0; i<a_size; i++)
-			env.put(vars.get(i), args.get(i).visit(this, env));
+			if(a_size == 1 && v_size != 1){
+				Exp e = args.get(0);
+				result = e.visit(this,env);
+				if(result.getType() == SmplType.LIST){
+					SmplList l = result.listValue();
+					for(int i=0; i<v_size; i++){
+						if(l.getNextValue() != null){
+							env.put(vars.get(i), l.getCurrentValue());
+							l = l.getNextValue();
+						}
+					}
+				}
+			} else if(a_size != v_size){
+				throw new SmplException("Must assign same number of expressions as variables");
+			} else {
+				for(int i=0; i<a_size; i++)
+					env.put(vars.get(i), args.get(i).visit(this, env));
+			}
+		} else {
+			// assign value to vector position
+			// get vector reference
+			ExpVectorRef vr = sd.getVectorReference();
+			// get value to assign
+			Exp val = sd.getExp();
+			// get vector and position
+			String vecVar = vr.getVar();
+			Exp ref = vr.getRef();
+			result = ref.visit(this, env);
+			// confirm vector position is int
+			if(result.getType() != SmplType.INTEGER && result.getType() != SmplType.REAL)
+				throw new TypeSmplException(SmplType.INTEGER, result.getType());
+			// get ref as int
+			int _ref = result.intValue();
+			// get vector
+			SmplValue<?> vec = env.get(vecVar);
+			// confirm vector type
+			if(vec.getType() != SmplType.VECTOR)
+				throw new TypeSmplException(SmplType.VECTOR, vec.getType());
+			// get list from vector class
+			ArrayList<SmplValue<?>> lst = ((SmplVector)vec).getList();
+			if(_ref < 0 || _ref >= lst.size())
+				throw new SmplException("Reference to index [" + _ref + "] outside of bounds of " + vecVar + "[" + lst.size() + "]");
+			lst.set(_ref, val.visit(this, env));
 
-		return result;
+		}
+
+		return SmplValue.make(true);
 	}
 
 	@Override
@@ -153,13 +197,29 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpProcedureCall(ExpProcedureCall exp, Environment<SmplValue<?>> env) throws SmplException {
 
-		ArrayList<Exp> args = exp.getArguments();
-		String id = exp.getVar();
+		// create copy of parameters since we will be manipulating this list
+		ArrayList<Exp> args = new ArrayList(exp.getArguments());
 
-		SmplProcedure proc = (SmplProcedure) env.get(id);
+		// get ExpProcedure instance
+		SmplProcedure proc;
+		// check if variable reference or explicit procedure declaration
+		if(exp.getVar() != null){
+			String id = exp.getVar();
+			proc = (SmplProcedure) env.get(id);
+		} else {
+			Exp toEval = exp.getProcExp();
+			result = toEval.visit(this, env);
+			if(result.getType() != SmplType.PROCEDURE)
+				throw new TypeSmplException(SmplType.PROCEDURE, result.getType());
+			else
+				proc = (SmplProcedure) result;
+		}
+
 		ExpProcedure procExp = proc.getProcExp();
+		Environment _env = proc.getClosingEnv();
 
-		ArrayList<String> params = procExp.getParameters();
+		// create copy of parameters since we will be manipulating this list
+		ArrayList<String> params = new ArrayList(procExp.getParameters());
 		Exp body = procExp.getBody();
 
 		int a_size = args.size();
@@ -192,16 +252,30 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 			vals.add(SmplValue.makeList(extras));
 		}
 
-		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, env);
+		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, _env);
 
-		return body.visit(this, newEnv);
+		if(body == null){
+			ArrayList<Exp> expList = procExp.getExpressions();
+			ArrayList<SmplValue<?>> vlist = new ArrayList();
+			if(expList == null)
+				throw new SmplException("Procedure body not found.");
+			for(Exp e : expList)
+				vlist.add(e.visit(this, newEnv));
+			return SmplValue.makeList(vlist);
+		} else {
+			return body.visit(this, newEnv);
+		}
+
 	}
 
 	@Override
 	public SmplValue<?> visitExpPair(ExpPair exp, Environment<SmplValue<?>> env) throws SmplException {
 		SmplValue<?> v1 = exp.getExpL().visit(this, env);
 		SmplValue<?> v2 = exp.getExpR().visit(this, env);
-		return new SmplPair(v1, v2);
+		if(v2.getType() == SmplType.LIST || v2.getType() == SmplType.EMPTYLIST)
+			return SmplValue.makeList(v1,(SmplList)v2);
+		else
+			return SmplValue.makePair(v1, v2);
 	}
 
 	@Override
@@ -216,12 +290,104 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	}
 
 	@Override
+	public SmplValue<?> visitExpVector(ExpVector exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		ArrayList<Exp> lst = exp.getList();
+		ArrayList<SmplValue<?>> vals = new ArrayList();
+
+		for(Exp e : lst){
+			result = e.visit(this, env);
+			if(result.getType() == SmplType.SUBVECTOR){
+				int size = ((SmplSubVector)result).getSizeInt();
+				SmplProcedure proc = ((SmplSubVector)result).getProcedure();
+				ExpProcedure procExp = proc.getProcExp();
+				// get parameters and expression body
+				ArrayList<String> params = new ArrayList(procExp.getParameters());
+				if(params.size() > 1 || procExp.getListVar() != null)
+					throw new SmplException("Procedure must have 1 or no parameters.");
+				Exp body = procExp.getBody();
+				// evaluate for 0 through size
+				for(int i=0; i<size; i++){
+					ArrayList<SmplInt> args = new ArrayList();
+					args.add(SmplValue.make(i));
+					Environment<SmplValue<?>> newEnv = new Environment(params, args, env);
+					vals.add(body.visit(this,newEnv));
+				}
+			} else {
+				vals.add(e.visit(this, env));
+			}
+		}
+
+		return SmplValue.makeVector(vals);
+	}
+
+	@Override
+	public SmplValue<?> visitExpVectorRef(ExpVectorRef exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp ref = exp.getRef();
+		result = ref.visit(this, env);
+
+		if(result.getType() != SmplType.INTEGER && result.getType() != SmplType.REAL)
+			throw new TypeSmplException(SmplType.INTEGER, result.getType());
+
+		int _ref = result.intValue();
+
+		String var = exp.getVar();
+		SmplValue<?> val = env.get(var);
+
+		if(val.getType() != SmplType.VECTOR)
+			throw new TypeSmplException(SmplType.VECTOR, val.getType());
+
+		ArrayList<SmplValue<?>> lst = ((SmplVector)val).getList();
+
+		if(_ref < 0 || _ref >= lst.size())
+				throw new SmplException("Reference to index [" + _ref + "] outside of bounds of " + var + "[" + lst.size() + "]");
+
+		return lst.get(_ref);
+	}
+
+	@Override
+	public SmplValue<?> visitExpSize(ExpSize exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp body = exp.getBody();
+		result = body.visit(this, env);
+
+		if(result.getType() != SmplType.VECTOR)
+			throw new TypeSmplException(SmplType.VECTOR, result.getType());
+
+		ArrayList<SmplValue<?>> lst = ((SmplVector)result).getList();
+
+		return SmplValue.make(lst.size());
+	}
+
+	@Override
+	public SmplValue<?> visitExpSubVector(ExpSubVector exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		SmplInt size;
+		SmplProcedure proc;
+
+		result = exp.getSize().visit(this, env);
+		if(result.getType() == SmplType.INTEGER)
+			size = (SmplInt) result;
+		else
+			throw new TypeSmplException(SmplType.INTEGER, result.getType());
+
+		result = exp.getProcedure().visit(this,env);
+		if(result.getType() == SmplType.PROCEDURE)
+			proc = (SmplProcedure) result;
+		else
+			throw new TypeSmplException(SmplType.PROCEDURE, result.getType());
+
+		return SmplValue.makeSubVector(size,proc);
+	}
+
+	@Override
 	public SmplValue<?> visitExpPairCheck(ExpPairCheck exp, Environment<SmplValue<?>> env) throws SmplException {
 		Exp toCheck = exp.getExp();
 		result = toCheck.visit(this, env);
 		SmplType type = result.getType();
 
-		return new SmplBool(type == SmplType.PAIR);
+		return new SmplBool(type == SmplType.PAIR || type == SmplType.LIST || type == SmplType.EMPTYLIST);
 	}
 
 	@Override
@@ -232,6 +398,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		if(type == SmplType.PAIR)
 			return ((SmplPair)result).getFirstValue();
+		else if(type == SmplType.LIST || type == SmplType.EMPTYLIST)
+			return ((SmplList)result).getFirstValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -244,6 +412,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		if(type == SmplType.PAIR)
 			return ((SmplPair)result).getSecondValue();
+		else if(type == SmplType.LIST || type == SmplType.EMPTYLIST)
+			return ((SmplList)result).getSecondValue();
 		else
 			throw new TypeSmplException(SmplType.PAIR, type);
 	}
@@ -381,45 +551,73 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	@Override
 	public SmplValue<?> visitExpCall(ExpCall exp, Environment<SmplValue<?>> env) throws SmplException {
 
-		ExpProcedure functionDef = exp.getExp();
-		ArrayList<String> vars = functionDef.getParameters();
-		Exp body = functionDef.getBody();
-		ArrayList<Exp> expVals;
+		Exp expl = exp.getExpL();
+		Exp expr = exp.getExpR();
 
-		ArrayList<SmplValue<?>> vals = new ArrayList<SmplValue<?>>();
+		// confirm that first argument is a procedure
+		SmplType expltype = expl.visit(this, env).getType();
 
-		if(exp.getId().equals(" "))
-		{
-			expVals = exp.getExpList().getList();
-			for(int i = 0; i < expVals.size(); i++)
-			{
-				vals.add((SmplValue) expVals.get(i).visit(this, env));
+		if(expltype != SmplType.PROCEDURE)
+			throw new TypeSmplException(SmplType.PROCEDURE, expltype);
+
+		// grab procedure
+		SmplProcedure proc = (SmplProcedure) expl.visit(this, env);
+		ExpProcedure toEval = proc.getProcExp();
+
+		// get procedure parameters
+		ArrayList<String> _params = new ArrayList(toEval.getParameters());
+		int p_size = _params.size();
+
+		// get procedure body
+		Exp body = toEval.getBody();
+
+		// confirm that second argument is a list
+		SmplType exprtype = expr.visit(this, env).getType();
+
+		if(exprtype != SmplType.LIST && exprtype != SmplType.EMPTYLIST)
+			throw new TypeSmplException(SmplType.LIST, exprtype);
+
+		// grab list
+		SmplList lst = (SmplList) expr.visit(this, env);
+
+		// convert to ArrayList
+		ArrayList<SmplValue<?>> args = new ArrayList();
+		ArrayList<SmplValue<?>> extras = new ArrayList();
+
+		// ArrayList of parameters that are matched by arguments
+		ArrayList<String> params = new ArrayList();
+
+		// add value for each parameter,
+		// create arraylist of extras,
+		// add extras as argument
+		int i = 0;	// counter
+		while(lst.getType() != SmplType.EMPTYLIST){
+			if(i < p_size){
+				args.add(lst.getCurrentValue());
+				params.add(_params.get(i));
+			} else {
+				extras.add(lst.getCurrentValue());
 			}
-		}
-		else
-		{ 
-			SmplList l = (SmplList)env.get(exp.getId()); 
-			
 
-			while (l.getFirstValue() != null )
-			{
-				vals.add((SmplValue) l.getFirstValue());
-				
-				
-				l = (SmplList) l.getSecondValue();
-			}
+			lst = lst.getNextValue();
 
-			Collections.reverse(vals);
-
+			i++;	// increment counter
 		}
 
+		// get extra veriable
+		String e = toEval.getListVar();
+		if(e != null)
+			params.add(e);
 
-		
+		// add extras to args
+		if(!extras.isEmpty())
+			args.add(SmplValue.makeList(extras));
 
-		
+		//System.out.println(args);
+		Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(params, args, env);
 
-		Environment<SmplValue<?>> newEnv = new Environment<> (vars, vals, env);
-    	return body.visit(this, newEnv);
+		//System.out.println(newEnv);
+		return body.visit(this, newEnv);
 
 	}
 
@@ -577,8 +775,12 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	public SmplValue<?> visitExpReadInt(ExpReadInt exp, Environment<SmplValue<?>> env) throws SmplException {
 		
 		Scanner input = new Scanner(System.in);
-		result = SmplValue.make(input.nextInt());
-		return result;
+		if(input.hasNextInt()){
+			result = SmplValue.make(input.nextInt());
+			return result;
+		} else {
+			throw new TypeSmplException("Type Error: Input must be of type " + SmplType.INTEGER);
+		}
 	}
 
 	@Override
@@ -623,5 +825,132 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
 		return result;
 
+	}
+
+	@Override
+	public SmplValue<?> visitExpCase(ExpCase exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		// get cases
+		ArrayList<ExpPair> lst = exp.getList();
+		Exp elseCond = null;
+		// examine each case
+		for(ExpPair _case : lst){
+			Exp cond = _case.getExpL();
+			SmplValue<?> check = cond.visit(this, env);
+			// skip evaluation for else condition
+			if(check.getType() == SmplType.STRING){
+				if(check.stringValue().equals("else")){
+					elseCond = _case.getExpR();
+					break;
+				}
+			}
+			// check condition is booleans
+			if(check.getType() != SmplType.BOOLEAN)
+				throw new TypeSmplException(SmplType.BOOLEAN, check.getType());
+
+			if(check.boolValue()){
+				Exp body = _case.getExpR();
+				result = body.visit(this, env);
+				return result;
+			}
+		}
+		// true case has not been found
+		if(elseCond != null)
+			result = elseCond.visit(this, env);
+		// return value stored in result
+		return result;
+	}
+
+	@Override
+	public SmplValue<?> visitExpSin(ExpSin exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.sin(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.sin(value.doubleValue()));
+		}
+		
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpCos(ExpCos exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cos(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cos(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpTan(ExpTan exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.tan(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.tan(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpSec(ExpSec exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.sec(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.sec(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpCot(ExpCot exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cot(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cot(value.doubleValue()));
+		}
+		return result;
+	}
+
+	@Override
+	public SmplValue<?> visitExpCosec(ExpCosec exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cosec(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cosec(value.doubleValue()));
+		}
+		return result;
 	}
 }

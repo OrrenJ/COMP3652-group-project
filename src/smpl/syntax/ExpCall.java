@@ -7,31 +7,25 @@ import smpl.values.*;
 
 public class ExpCall extends Exp {
 
-  ExpProcedure exp;
-  ExpList lst;
-  String id = " ";
+  Exp exp;
+  Exp lst;
 
-  public ExpCall(ExpProcedure e, Exp l) {
+  public ExpCall(Exp e){
     exp = e;
-    lst = (ExpList)l;
+    lst = new ExpList();
   }
 
-  public ExpCall(ExpProcedure e, String i) {
+  public ExpCall(Exp e, Exp l){
     exp = e;
-    id = i;
+    lst = l;
   }
 
-
-  public ExpProcedure getExp(){
+  public Exp getExpL(){
     return exp;
   }
 
-  public ExpList getExpList(){
+  public Exp getExpR(){
     return lst;
-  }
-
-  public String getId(){
-    return id;
   }
 
   @Override

@@ -53,15 +53,44 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public static SmplString makeStrEscaped(String v){
 		return new SmplString(SmplString.escape(v));
 	}
+/*
+	public static SmplPair makePair(SmplValue<?> val1, SmplList val2){
+			return new SmplList(val1, (SmplList)val2);
+
+	}
+
+	public static SmplPair makePair(SmplValue<?> val1, SmplPair val2){
+			return new SmplList(val1, (SmplList)val2);
+	}
+*/
+	public static SmplPair makePair(SmplValue<?> val1, SmplValue<?> val2){
+			return new SmplPair(val1, val2);
+	}
+
+	public static SmplPair makeFraction(SmplValue<?> val1, SmplValue<?> val2){
+			return new SmplFraction(val1, val2);
+	}
+
+	public static SmplList makeList(SmplValue<?> val1, SmplList val2){
+		return new SmplList(val1, val2);
+	}
 
 	public static SmplList makeList(ArrayList<SmplValue<?>> v){
 
 		if(v.size() > 0){
-			return new SmplList(v.remove(v.size()-1), makeList(v));
+			return new SmplList(v.remove(0), makeList(v));
 		} else {
 			return new SmplEmptyList();
 		}
 
+	}
+
+	public static SmplVector makeVector(ArrayList<SmplValue<?>> v){
+		return new SmplVector(v);
+	}
+
+	public static SmplSubVector makeSubVector(SmplInt size, SmplProcedure proc){
+		return new SmplSubVector(size,proc);
 	}
 
 	// return the type of a value
@@ -169,5 +198,17 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 
 	public SmplProcedure procValue() throws TypeSmplException {
 		throw new TypeSmplException(SmplType.PROCEDURE, getType());
+	}
+
+	public SmplVector vectorValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.VECTOR, getType());
+	}
+
+	public SmplList listValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.LIST, getType());
+	} 
+
+	public SmplList fractionValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.FRACTION, getType());
 	}
 }

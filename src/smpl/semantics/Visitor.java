@@ -25,6 +25,10 @@ public interface Visitor<S, T> {
 	public T visitExpProcedureCall(ExpProcedureCall exp, S arg) throws SmplException;
 	public T visitExpPair(ExpPair exp, S arg) throws SmplException;
 	public T visitExpList(ExpList exp, S arg) throws SmplException;
+	public T visitExpVector(ExpVector exp, S arg) throws SmplException;
+	public T visitExpVectorRef(ExpVectorRef exp, S arg) throws SmplException;
+	public T visitExpSize(ExpSize exp, S arg) throws SmplException;
+	public T visitExpSubVector(ExpSubVector exp, S arg) throws SmplException;
 	public T visitExpPairCheck(ExpPairCheck exp, S arg) throws SmplException;
 	public T visitExpCar(ExpCar exp, S arg) throws SmplException;
 	public T visitExpCdr(ExpCdr exp, S arg) throws SmplException;
@@ -50,5 +54,14 @@ public interface Visitor<S, T> {
 	public T visitExpRead(ExpRead exp, S arg) throws SmplException;
 	public T visitExpReadInt(ExpReadInt exp, S arg) throws SmplException;
 	public T visitExpIf(ExpIf exp, S arg) throws SmplException;
+	public T visitExpCase(ExpCase exp, S arg) throws SmplException;
+
+	//new visitors
+	public T visitExpSin(ExpSin exp, S arg) throws SmplException;
+	public T visitExpCos(ExpCos exp, S arg) throws SmplException;
+	public T visitExpTan(ExpTan exp, S arg) throws SmplException;
+	public T visitExpSec(ExpSec exp, S arg) throws SmplException;
+	public T visitExpCosec(ExpCosec exp, S arg) throws SmplException;
+	public T visitExpCot(ExpCot exp, S arg) throws SmplException;
 
 }

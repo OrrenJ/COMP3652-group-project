@@ -48,6 +48,6 @@ public class SmplPair extends SmplValue<SmplPair> {
 
 	@Override
 	public String toString() {
-		return "Pair: <" + val1.toString() + ", " + val2.toString() + ">";
+		return "(" + val1.toString() + " . " + val2.toString() + ")";
 	}
 }

@@ -2,7 +2,6 @@ package smpl.values;
 
 import smpl.sys.SmplException;
 import static smpl.values.SmplValue.make;
-import java.util.*;
 
 public class SmplList extends SmplPair {
 
@@ -17,6 +16,19 @@ public class SmplList extends SmplPair {
 	@Override
 	public SmplType getType(){
 		return SmplType.LIST;
+	}
+
+	@Override
+	public SmplList listValue(){
+		return this;
+	}
+
+	public SmplValue<?> getCurrentValue(){
+		return getFirstValue();
+	}
+
+	public SmplList getNextValue(){
+		return (SmplList) getSecondValue();
 	}
 
 	// check if pairs have equivalent values

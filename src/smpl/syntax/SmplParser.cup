@@ -52,13 +52,13 @@ scan with {:
 /* Terminals (tokens returned by the scanner). */
 
 // special symbols
-terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COMMA, NEG, PERIOD;
+terminal LSTCONCAT,LPAREN, RPAREN, LBRACE, RBRACE, LBRACKET, RBRACKET, SEMI, COLON, COMMA, NEG, PERIOD, LVEC, RVEC;
 
 // arithmetic operators
 terminal PLUS, MINUS, MUL, DIV, MOD, POW;
 
 // bitwise opertors
-terminal BAND, BOR, BNOT, LET;
+terminal BAND, BOR, BNOT;
 
 // relational operators
 terminal EQ, GT, LT, LE, GE, NEQ;
@@ -71,7 +71,9 @@ terminal ASSIGN;
 
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
-terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE;
+terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
+terminal SIN, COS, TAN, SEC, COSEC, COT;
+
 
 // terminals with values
 terminal Integer INTEGER;
@@ -84,7 +86,7 @@ terminal String VARIABLE;
 /* Non terminals */
 non terminal SmplProgram program;
 non terminal StmtSequence stmtList;
-non terminal Statement stmt;
+non terminal Exp stmt;
 non terminal StmtDefinition definition;
 non terminal StmtPrint print;
 
@@ -105,7 +107,11 @@ non terminal Exp cdr;
 non terminal Exp substr;
 
 non terminal Exp list;
+non terminal Exp vector;
+non terminal ExpVectorRef vectorRef;
+non terminal Exp size;
 
+non terminal AbstractMap.Entry<String,ArrayList<String>> procHead;
 non terminal ExpProcedure procExp;
 non terminal ArrayList<String> params;
 non terminal ArrayList<String> paramsAux;
@@ -113,6 +119,9 @@ non terminal ArrayList<String> paramsAux;
 non terminal ExpProcedureCall procCallExp;
 non terminal ArrayList<Exp> args;
 non terminal ArrayList<Exp> argsAux;
+non terminal Exp subvector;
+non terminal ArrayList<Exp> vargs;
+non terminal ArrayList<Exp> vargsAux;
 
 non terminal Exp arithExp;
 non terminal Exp logicAnd;
@@ -143,13 +152,27 @@ non terminal Exp readint;
 non terminal Exp expIf;
 non terminal Exp expElse;
 
+non terminal Exp expCase;
+non terminal ExpPair _case;
+non terminal ArrayList<ExpPair> cases;
+non terminal ArrayList<ExpPair> casesAux;
+
 non terminal Exp concatList;
+
+non terminal Exp trigFunctions;
+
+
+non terminal  quadratic;
+non terminal  Polynomial polynomial;
+
 
 
 
 non terminal empty;
 
 /* Grammar rules */
+
+precedence left COLON, ELSE, RPAREN;
 
 program ::= stmtList:s {: RESULT = new SmplProgram(s); :};
 
@@ -162,11 +185,13 @@ stmtList ::= stmtList:lst stmt:s {:
 			:};
 
 stmt ::= definition:d SEMI {: RESULT = d; :} |
-			print:p SEMI {: RESULT = p; :} |
-			expression:e SEMI {: RESULT = e; :};
+			expression:e SEMI {: RESULT = e; :} |
+			def:d {: RESULT = d; :};
 
 definition ::= params:p ASSIGN args:a {:
 				RESULT = new StmtDefinition(p, a); 
+			:} | vectorRef:v ASSIGN expression:e {:
+				RESULT = new StmtDefinition(v,e);
 			:};
 
 print ::= PRINT LPAREN expression:e RPAREN {:
@@ -175,18 +200,21 @@ print ::= PRINT LPAREN expression:e RPAREN {:
 				RESULT = new StmtPrint(e, '\n'); 
 			:};
 
-expression ::= letStmt:l {: RESULT = l; :} |
+expression ::= expCase:c {: RESULT = c; :} |
+				letStmt:l {: RESULT = l; :} |
+				print:p {: RESULT = p; :} |
+				expIf:e {: RESULT = e; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
-				arithExp:a {: RESULT = a; :}|
-				def:d {: RESULT = d; :}|
-				expIf:e {: RESULT = e; :};
+				arithExp:a {: RESULT = a; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
 			:};
 
 binding ::= VARIABLE:v EQ expression:e {:
+				RESULT = new Binding(v, e);
+			:} | VARIABLE:v BE expression:e {:
 				RESULT = new Binding(v, e);
 			:};
 
@@ -202,14 +230,20 @@ bindingsAux ::= COMMA binding:b bindingsAux:bl {:
 				:} |
 			empty {: RESULT = new ArrayList(); :};
 
-procExp ::= PROC LPAREN params:ps RPAREN expression:body {:
-				RESULT = new ExpProcedure(ps, body);
+procHead ::= PROC LPAREN params:ps RPAREN {:
+				RESULT = new AbstractMap.SimpleEntry(null,ps);
 			:} |
-			PROC LPAREN params:ps PERIOD VARIABLE:v RPAREN expression:body {:
-				RESULT = new ExpProcedure(ps, body, v);
+			PROC LPAREN params:ps PERIOD VARIABLE:v RPAREN {:
+				RESULT = new AbstractMap.SimpleEntry(v,ps);
 			:} |
-			PROC VARIABLE:v expression:body {:
-				RESULT = new ExpProcedure(body, v);
+			PROC VARIABLE:v {:
+				RESULT = new AbstractMap.SimpleEntry(v,null);
+			:};
+
+procExp ::= procHead:h expression:body {:
+				RESULT = new ExpProcedure(h.getValue(), body, h.getKey());
+			:} | procHead:h LPAREN args:a RPAREN {:
+				RESULT = new ExpProcedure(h.getValue(), a, h.getKey());
 			:};
 
 params ::= VARIABLE:v paramsAux:pl {:
@@ -226,7 +260,9 @@ paramsAux ::= COMMA VARIABLE:v paramsAux:pl {:
 				RESULT = new ArrayList();
 			:};
 
-procCallExp ::= VARIABLE:v LPAREN args:a RPAREN {:
+procCallExp ::= LPAREN expression:e RPAREN LPAREN args:a RPAREN {:
+				RESULT = new ExpProcedureCall(e, a);
+			:} | VARIABLE:v LPAREN args:a RPAREN {:
 				RESULT = new ExpProcedureCall(v, a);
 			:};
 
@@ -292,8 +328,9 @@ factor ::= val:n {: RESULT = new ExpLit(n); :} |
 		strVal:sv {: RESULT = new ExpLit(sv); :} |
 		builtIn:b {: RESULT = b; :} |
 		VARIABLE:var {: RESULT = new ExpVar(var); :} |
+		vectorRef:vr {: RESULT = vr; :} |
 		procCallExp:pc {: RESULT = pc; :} |
-		LPAREN expression:e RPAREN {: RESULT = e; :}	;
+		LPAREN expression:e RPAREN {: RESULT = e; :};
 
 val ::= INTEGER:ilit {: RESULT = SmplValue.make(ilit); :} |
 		REAL: rlit {: RESULT = SmplValue.make(rlit); :};
@@ -308,6 +345,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			car:c {: RESULT = c; :} |
 			cdr:c {: RESULT = c; :} |
 			list:l {: RESULT = l; :} |
+			vector:v {: RESULT = v; :} |
+			size:s {: RESULT = s; :} |
 			substr:s {: RESULT = s; :}|
 			eqv:e {: RESULT = e; :}|
 			equal:e {: RESULT = e; :}|
@@ -315,7 +354,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			lazy:l {: RESULT = l; :}|
 			concatList:c {: RESULT = c; :}|
 			read:r {: RESULT = r; :}|
-			readint:r {: RESULT = r; :};
+			readint:r {: RESULT = r; :}|
+			trigFunctions:t {: RESULT = t; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -353,6 +393,37 @@ list ::= LIST LPAREN args:a RPAREN {:
 			RESULT = new ExpList(a); :} |
 		EMPTYLIST {: RESULT = new ExpList(); :};
 
+vector ::= LVEC vargs:v RVEC {:
+			RESULT = new ExpVector(v);
+		:};
+
+subvector ::= expression:e1 COLON expression:e2 {:
+				RESULT = new ExpSubVector(e1,e2);
+			:} | expression:e {: 
+				RESULT = e; 
+			:};
+
+vargs ::= subvector:s vargsAux:vl {:
+			vl.add(0,s);
+			RESULT = vl;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+vargsAux ::= COMMA subvector:s vargsAux:vl {:
+			vl.add(0,s);
+			RESULT = vl;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+vectorRef ::= VARIABLE:v LBRACKET expression:n RBRACKET {:
+			RESULT = new ExpVectorRef(v,n);
+		:};
+
+size ::= SIZE LPAREN expression:e RPAREN {:
+			RESULT = new ExpSize(e);
+		:};
 
 eqv ::= EQV LPAREN expression:a COMMA expression:b RPAREN {:
 		RESULT = new ExpEqv(a,b);
@@ -362,16 +433,16 @@ equal ::= EQUAL LPAREN expression:a COMMA expression:b RPAREN {:
 		RESULT = new ExpEqual(a,b);
 	:};	
 
-def ::= DEF VARIABLE:v expression:e {:
+def ::= DEF VARIABLE:v stmt:e {:
 		RESULT = new ExpDef(v,e); 
 	:};
 
-call ::= CALL LPAREN procExp:p COMMA list:l RPAREN{:
-		RESULT  = new ExpCall(p,l);
-	:}|
-	CALL LPAREN procExp:p COMMA VARIABLE:v RPAREN{:
-		RESULT  = new ExpCall(p,v);
-	:};
+call ::= CALL LPAREN expression:p COMMA expression:l RPAREN {:
+			RESULT = new ExpCall(p,l);
+		:} | 
+		CALL LPAREN expression:p RPAREN {:
+			RESULT = new ExpCall(p);
+		:};
 
 lazy ::= LAZY LPAREN expression:e RPAREN{:
 		RESULT = new ExpLazy(e);
@@ -402,10 +473,55 @@ expIf ::= IF expression:con THEN expression:ifArg expElse:elseArg{:
 		RESULT = new ExpIf(con, ifArg, elseArg);
 	:};
 
-expElse ::= LBRACKET ELSE expression:elseArg RBRACKET {:
+expElse ::= ELSE expression:elseArg {:
 		RESULT = elseArg;
-
+	:} | empty {:
+		RESULT = null;
 	:};
+
+expCase ::= CASE LBRACE cases:c RBRACE {:
+				RESULT = new ExpCase(c);
+			:};
+
+_case ::= expression:c COLON expression:r {:
+			RESULT = new ExpPair(c,r);
+		:} | ELSE COLON expression:r {:
+			RESULT = new ExpPair(new ExpLit(SmplValue.makeStrEscaped("else")),r); :};
+
+cases ::= _case:c casesAux:ca {:
+			ca.add(0,c);
+			RESULT = ca;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+casesAux ::= COMMA _case:c casesAux:ca {:
+			ca.add(0,c);
+			RESULT = ca;
+		:} | empty {:
+			RESULT = new ArrayList();
+		:};
+
+//new functionality
+trigFunctions ::= SIN LPAREN expression: e RPAREN {:
+					RESULT = new ExpSin(e);
+				:}|
+				  COS LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCos(e); 
+				:}|
+				  TAN LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpTan(e);
+				:}|
+				  SEC LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpSec(e);
+				 :}|
+				  COSEC LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCosec(e);
+				 :}|
+				  COT LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCot(e);
+				 :};
+
 
 
 empty ::= ;

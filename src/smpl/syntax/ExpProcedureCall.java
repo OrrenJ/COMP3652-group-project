@@ -8,6 +8,7 @@ public class ExpProcedureCall extends Exp {
 
   ArrayList<Exp> args;
   String var;
+  Exp procExp;
 
   public ExpProcedureCall(){
     super();
@@ -16,6 +17,13 @@ public class ExpProcedureCall extends Exp {
   public ExpProcedureCall(String var, ArrayList<Exp> args){
     this.args = args;
     this.var = var;
+    this.procExp = null;
+  }
+
+  public ExpProcedureCall(Exp procExp, ArrayList<Exp> args){
+    this.args = args;
+    this.var = null;
+    this.procExp = procExp;
   }
 
   public ArrayList<Exp> getArguments(){
@@ -24,6 +32,10 @@ public class ExpProcedureCall extends Exp {
 
   public String getVar(){
     return var;
+  }
+
+  public Exp getProcExp(){
+    return procExp;
   }
 
   @Override

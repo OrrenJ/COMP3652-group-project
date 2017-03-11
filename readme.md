@@ -46,31 +46,23 @@ Completed
 * list concatenation `@`
 * `read`, `readint`
 * `if <expr> then <expr> [else <expr>]`
-
-TO DO
------
-
 * vectors and built in vector functions
 
 * `case { [p1:c1, ..., pn:cn] } <expr> : <expr>`
 
 
-Optional (with suggested implementation)
-----------------------------------------
+TO DO
+-----
 
-* lazy evaluation
-* dynamic scoping
-* reference parameters (as opposed to call by value)
-* graphics
+* trig functions sine, cosine, tan, sec, cosec, cot evaluations
+* fraction evaluation (data type)
+* quadratics
+* polynomials
+* Differentiation
+* Limits
+* Integration
+* exponent (e^x)
+* logarithm
 
-Optional (without suggested implementation)
--------------------------------------------
 
-* arbitrary precision integer arithmetic
-* user defined records (like structs)
-* additional control structures
-* exceptions
-* macros
-* call by name
-* threads
 

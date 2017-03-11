@@ -4,7 +4,7 @@ import smpl.semantics.Visitor;
 import smpl.syntax.Exp;
 import smpl.sys.SmplException;
 
-public class StmtPrint extends Statement {
+public class StmtPrint extends Exp {
 
 	Exp exp;
 	char terminator;

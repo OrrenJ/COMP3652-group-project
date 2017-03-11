@@ -69,9 +69,9 @@ ch = [^\\\n\"]|"\\".|{hex}{4}
 
 any = .|{ws}
 
-comment = (\/\*({any}*?)\*\/)|(\/\/(.*?){nl})
+mini_comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
 
-keywords = "substr";
+comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\/)|(\/\/.*)
 
 %%
 
@@ -81,16 +81,13 @@ keywords = "substr";
 <YYINITIAL>	{ws}	{
 			 // skip whitespace
 			}
-<YYINITIAL>	{comment}	{
-			 // skip comment
-			}
 
 <YYINITIAL>	{ws}"+"{ws}	{return new Symbol(sym.PLUS);}
 <YYINITIAL>	{ws}"-"{ws}	{return new Symbol(sym.MINUS);}
 <YYINITIAL> "-"			{return new Symbol(sym.NEG);}
 <YYINITIAL>	{ws}"*"{ws}	{return new Symbol(sym.MUL);}
-<YYINITIAL>	{ws}"/"{ws}	{return new Symbol(sym.DIV);}
-<YYINITIAL>	{ws}"%"{ws}	{return new Symbol(sym.MOD);}
+<YYINITIAL>	"/"	{return new Symbol(sym.DIV);}
+<YYINITIAL>	"%"	{return new Symbol(sym.MOD);}
 <YYINITIAL>	{ws}"^"{ws}	{return new Symbol(sym.POW);}
 
 <YYINITIAL> {ws}":="{ws}	{return new Symbol(sym.ASSIGN);}
@@ -119,10 +116,14 @@ keywords = "substr";
 <YYINITIAL> ","	{return new Symbol(sym.COMMA);}
 <YYINITIAL> "."	{return new Symbol(sym.PERIOD);}
 <YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
+<YYINITIAL> ":"	{return new Symbol(sym.COLON);}
 <YYINITIAL> "@"	{return new Symbol(sym.LSTCONCAT);}
+<YYINITIAL> "[:"	{return new Symbol(sym.LVEC);}
+<YYINITIAL> ":]"	{return new Symbol(sym.RVEC);}
 
 // KETWORDS
 <YYINITIAL> "let"	{return new Symbol(sym.LET);}
+<YYINITIAL> "be"	{return new Symbol(sym.BE);}
 <YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
 
 <YYINITIAL> "pair?"	{return new Symbol(sym.PAIRCHECK);}
@@ -132,6 +133,7 @@ keywords = "substr";
 
 <YYINITIAL> "#e"	{return new Symbol(sym.EMPTYLIST);}
 <YYINITIAL> "list" 	{return new Symbol(sym.LIST);}
+<YYINITIAL> "size" 	{return new Symbol(sym.SIZE);}
 <YYINITIAL> "substr"	{return new Symbol(sym.SUBSTR);}
 
 <YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
@@ -151,6 +153,15 @@ keywords = "substr";
 <YYINITIAL> "then"  {return new Symbol(sym.THEN);}
 <YYINITIAL> "else"  {return new Symbol(sym.ELSE);}
 <YYINITIAL> "case"  {return new Symbol(sym.CASE);}
+
+<YYINITIAL> "sin"  {return new Symbol(sym.SIN);}
+<YYINITIAL> "cos"  {return new Symbol(sym.COS);}
+<YYINITIAL> "tan"  {return new Symbol(sym.TAN);}
+<YYINITIAL> "sec"  {return new Symbol(sym.SEC);}
+<YYINITIAL> "cosec"  {return new Symbol(sym.COSEC);}
+<YYINITIAL> "cot"  {return new Symbol(sym.COT);}
+
+
 
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER
@@ -192,7 +203,13 @@ keywords = "substr";
 <YYINITIAL> "#t" {return new Symbol(sym.BOOL, true);}
 <YYINITIAL> "#f" {return new Symbol(sym.BOOL, false);}
 
-<YYINITIAL> {alpha}{varchars}* {
+
+
+
+<YYINITIAL> {varchars}* {
 				// VARIABLE
 				return new Symbol(sym.VARIABLE, yytext());
+			}
+<YYINITIAL>	{comment}	{
+			 // skip comment
 			}
