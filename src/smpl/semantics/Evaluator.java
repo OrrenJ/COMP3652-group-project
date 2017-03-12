@@ -4,6 +4,7 @@ import smpl.syntax.*;
 import smpl.sys.SmplException;
 import smpl.values.*;
 import java.util.*;
+import java.lang.Math;
 
 public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?>> {
 
@@ -859,4 +860,100 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		// return value stored in result
 		return result;
 	}
+<<<<<<< HEAD
+
+	@Override
+	public SmplValue<?> visitExpSin(ExpSin exp, Environment<SmplValue<?>> env) throws SmplException {
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.sin(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.sin(value.doubleValue()));
+		}
+		
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpCos(ExpCos exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cos(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cos(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpTan(ExpTan exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.tan(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.tan(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpSec(ExpSec exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.sec(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.sec(value.doubleValue()));
+		}
+		return result;
+	}
+	@Override
+	public SmplValue<?> visitExpCot(ExpCot exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cot(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cot(value.doubleValue()));
+		}
+		return result;
+	}
+
+	@Override
+	public SmplValue<?> visitExpCosec(ExpCosec exp, Environment<SmplValue<?>> env) throws SmplException { 
+
+		Exp param = exp.getExp();
+		SmplValue value = param.visit(this, env);
+		if(value.getType() == SmplType.INTEGER)
+		{
+			result = SmplValue.make(Math.cosec(Double.valueOf(value.intValue())));
+		}
+		else if(value.getType() == SmplType.REAL)
+		{
+			result = SmplValue.make(Math.cosec(value.doubleValue()));
+		}
+		return result;
+	}
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 }

@@ -15,20 +15,38 @@ public class sym {
   public static final int GE = 29;
   public static final int PERIOD = 13;
   public static final int READINT = 51;
+<<<<<<< HEAD
+  public static final int SEC = 62;
+  public static final int CASE = 55;
+  public static final int CAR = 37;
+  public static final int INTEGER = 65;
+=======
   public static final int CASE = 55;
   public static final int CAR = 37;
   public static final int INTEGER = 59;
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int CDR = 38;
   public static final int LPAREN = 3;
   public static final int SEMI = 9;
   public static final int PRINTLN = 40;
   public static final int LSTCONCAT = 2;
+<<<<<<< HEAD
+  public static final int TAN = 61;
+  public static final int PAIRCHECK = 36;
+  public static final int MINUS = 17;
+  public static final int COSEC = 63;
+  public static final int CHARACTER = 68;
+  public static final int RPAREN = 4;
+  public static final int LT = 27;
+  public static final int BOOL = 67;
+=======
   public static final int PAIRCHECK = 36;
   public static final int MINUS = 17;
   public static final int CHARACTER = 62;
   public static final int RPAREN = 4;
   public static final int LT = 27;
   public static final int BOOL = 61;
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int LAZY = 48;
   public static final int COMMA = 11;
   public static final int CALL = 47;
@@ -50,29 +68,124 @@ public class sym {
   public static final int error = 1;
   public static final int MUL = 18;
   public static final int LOR = 33;
+<<<<<<< HEAD
+  public static final int COT = 64;
+  public static final int COS = 60;
+=======
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int MOD = 20;
   public static final int NEQ = 30;
   public static final int PAIR = 35;
   public static final int EQ = 25;
+<<<<<<< HEAD
+  public static final int REAL = 66;
+=======
   public static final int REAL = 60;
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int EQV = 45;
   public static final int COLON = 10;
   public static final int NEG = 12;
   public static final int ELSE = 53;
   public static final int BOR = 23;
   public static final int LBRACE = 5;
+<<<<<<< HEAD
+  public static final int VARIABLE = 70;
+  public static final int BE = 58;
+  public static final int SIN = 59;
+=======
   public static final int VARIABLE = 64;
   public static final int BE = 58;
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int READ = 50;
   public static final int LIST = 41;
   public static final int SUBSTR = 44;
   public static final int LET = 57;
   public static final int THEN = 54;
   public static final int RBRACE = 6;
+<<<<<<< HEAD
+  public static final int STRING = 69;
+=======
   public static final int STRING = 63;
+>>>>>>> refs/remotes/OrrenJ/master
   public static final int PROC = 43;
   public static final int DEF = 49;
   public static final int GT = 26;
   public static final int PRINT = 39;
+<<<<<<< HEAD
+  public static final String[] terminalNames = new String[] {
+  "EOF",
+  "error",
+  "LSTCONCAT",
+  "LPAREN",
+  "RPAREN",
+  "LBRACE",
+  "RBRACE",
+  "LBRACKET",
+  "RBRACKET",
+  "SEMI",
+  "COLON",
+  "COMMA",
+  "NEG",
+  "PERIOD",
+  "LVEC",
+  "RVEC",
+  "PLUS",
+  "MINUS",
+  "MUL",
+  "DIV",
+  "MOD",
+  "POW",
+  "BAND",
+  "BOR",
+  "BNOT",
+  "EQ",
+  "GT",
+  "LT",
+  "LE",
+  "GE",
+  "NEQ",
+  "LNOT",
+  "LAND",
+  "LOR",
+  "ASSIGN",
+  "PAIR",
+  "PAIRCHECK",
+  "CAR",
+  "CDR",
+  "PRINT",
+  "PRINTLN",
+  "LIST",
+  "EMPTYLIST",
+  "PROC",
+  "SUBSTR",
+  "EQV",
+  "EQUAL",
+  "CALL",
+  "LAZY",
+  "DEF",
+  "READ",
+  "READINT",
+  "IF",
+  "ELSE",
+  "THEN",
+  "CASE",
+  "SIZE",
+  "LET",
+  "BE",
+  "SIN",
+  "COS",
+  "TAN",
+  "SEC",
+  "COSEC",
+  "COT",
+  "INTEGER",
+  "REAL",
+  "BOOL",
+  "CHARACTER",
+  "STRING",
+  "VARIABLE"
+  };
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 }
 

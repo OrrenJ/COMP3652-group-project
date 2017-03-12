@@ -72,6 +72,11 @@ terminal ASSIGN;
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
 terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
+<<<<<<< HEAD
+terminal SIN, COS, TAN, SEC, COSEC, COT;
+
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
 // terminals with values
 terminal Integer INTEGER;
@@ -154,6 +159,19 @@ non terminal Exp expCase;
 non terminal ExpPair _case;
 non terminal ArrayList<ExpPair> cases;
 non terminal ArrayList<ExpPair> casesAux;
+<<<<<<< HEAD
+
+non terminal Exp concatList;
+
+non terminal Exp trigFunctions;
+
+
+non terminal  quadratic;
+non terminal  Polynomial polynomial;
+
+
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
 non terminal Exp concatList;
 
@@ -343,7 +361,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			lazy:l {: RESULT = l; :}|
 			concatList:c {: RESULT = c; :}|
 			read:r {: RESULT = r; :}|
-			readint:r {: RESULT = r; :};
+			readint:r {: RESULT = r; :}|
+			trigFunctions:t {: RESULT = t; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -489,5 +508,30 @@ casesAux ::= COMMA _case:c casesAux:ca {:
 		:} | empty {:
 			RESULT = new ArrayList();
 		:};
+<<<<<<< HEAD
+
+//new functionality
+trigFunctions ::= SIN LPAREN expression: e RPAREN {:
+					RESULT = new ExpSin(e);
+				:}|
+				  COS LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCos(e); 
+				:}|
+				  TAN LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpTan(e);
+				:}|
+				  SEC LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpSec(e);
+				 :}|
+				  COSEC LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCosec(e);
+				 :}|
+				  COT LPAREN expression: e RPAREN {:
+				  	RESULT = new ExpCot(e);
+				 :};
+
+
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
 empty ::= ;

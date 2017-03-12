@@ -154,6 +154,15 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL> "else"  {return new Symbol(sym.ELSE);}
 <YYINITIAL> "case"  {return new Symbol(sym.CASE);}
 
+<YYINITIAL> "sin"  {return new Symbol(sym.SIN);}
+<YYINITIAL> "cos"  {return new Symbol(sym.COS);}
+<YYINITIAL> "tan"  {return new Symbol(sym.TAN);}
+<YYINITIAL> "sec"  {return new Symbol(sym.SEC);}
+<YYINITIAL> "cosec"  {return new Symbol(sym.COSEC);}
+<YYINITIAL> "cot"  {return new Symbol(sym.COT);}
+
+
+
 <YYINITIAL>	{sign}?{real}	{
 				// REAL NUMBER
 				return new Symbol(sym.REAL,
@@ -194,6 +203,12 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL> "#t" {return new Symbol(sym.BOOL, true);}
 <YYINITIAL> "#f" {return new Symbol(sym.BOOL, false);}
 
+<<<<<<< HEAD
+
+
+
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 <YYINITIAL> {varchars}* {
 				// VARIABLE
 				return new Symbol(sym.VARIABLE, yytext());
