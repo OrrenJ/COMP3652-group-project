@@ -203,9 +203,12 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL> "#t" {return new Symbol(sym.BOOL, true);}
 <YYINITIAL> "#f" {return new Symbol(sym.BOOL, false);}
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 <YYINITIAL> {varchars}* {
 				// VARIABLE
 				return new Symbol(sym.VARIABLE, yytext());

@@ -860,6 +860,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		// return value stored in result
 		return result;
 	}
+<<<<<<< HEAD
 
 	@Override
 	public SmplValue<?> visitExpSin(ExpSin exp, Environment<SmplValue<?>> env) throws SmplException {
@@ -953,4 +954,6 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		}
 		return result;
 	}
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 }

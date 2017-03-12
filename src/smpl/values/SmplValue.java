@@ -67,10 +67,13 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 			return new SmplPair(val1, val2);
 	}
 
+<<<<<<< HEAD
 	public static SmplPair makeFraction(SmplValue<?> val1, SmplValue<?> val2){
 			return new SmplFraction(val1, val2);
 	}
 
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 	public static SmplList makeList(SmplValue<?> val1, SmplList val2){
 		return new SmplList(val1, val2);
 	}
@@ -207,8 +210,11 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public SmplList listValue() throws TypeSmplException {
 		throw new TypeSmplException(SmplType.LIST, getType());
 	} 
+<<<<<<< HEAD
 
 	public SmplList fractionValue() throws TypeSmplException {
 		throw new TypeSmplException(SmplType.FRACTION, getType());
 	}
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 }

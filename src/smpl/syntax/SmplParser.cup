@@ -72,8 +72,11 @@ terminal ASSIGN;
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
 terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
+<<<<<<< HEAD
 terminal SIN, COS, TAN, SEC, COSEC, COT;
 
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
 // terminals with values
 terminal Integer INTEGER;
@@ -156,6 +159,7 @@ non terminal Exp expCase;
 non terminal ExpPair _case;
 non terminal ArrayList<ExpPair> cases;
 non terminal ArrayList<ExpPair> casesAux;
+<<<<<<< HEAD
 
 non terminal Exp concatList;
 
@@ -166,7 +170,10 @@ non terminal  quadratic;
 non terminal  Polynomial polynomial;
 
 
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
+non terminal Exp concatList;
 
 non terminal empty;
 
@@ -501,6 +508,7 @@ casesAux ::= COMMA _case:c casesAux:ca {:
 		:} | empty {:
 			RESULT = new ArrayList();
 		:};
+<<<<<<< HEAD
 
 //new functionality
 trigFunctions ::= SIN LPAREN expression: e RPAREN {:
@@ -523,5 +531,7 @@ trigFunctions ::= SIN LPAREN expression: e RPAREN {:
 				 :};
 
 
+=======
+>>>>>>> refs/remotes/OrrenJ/master
 
 empty ::= ;
