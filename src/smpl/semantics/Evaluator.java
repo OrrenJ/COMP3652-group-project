@@ -5,10 +5,16 @@ import smpl.sys.SmplException;
 import smpl.values.*;
 import java.util.*;
 import java.lang.Math;
+import java.awt.geom.Point2D;
+import smpl.gui.*;
 
 public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?>> {
 
 	protected SmplValue<?> result;
+	/**
+     * The plotting device used by this interpreter.
+     */
+    private Plotter plotter;
 
 	protected Environment<SmplValue<?>> globalEnv;
 
@@ -20,6 +26,21 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 	public Environment<SmplValue<?>> getGlobalEnv(){
 		return globalEnv;
 	}
+
+	/**
+     * @return The plotting device currently being used by this interpreter
+     */
+    public Plotter getPlotter() {
+        return plotter;
+    }
+
+    /**
+     * Set the plotting device.
+     * @param plotter The plotting device to be used by this interpreter.
+     */
+    public void setPlotter(Plotter plotter) {
+        this.plotter = plotter;
+    }
 
 	// program
 
@@ -860,7 +881,6 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		// return value stored in result
 		return result;
 	}
-<<<<<<< HEAD
 
 	@Override
 	public SmplValue<?> visitExpSin(ExpSin exp, Environment<SmplValue<?>> env) throws SmplException {
@@ -915,11 +935,11 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		SmplValue value = param.visit(this, env);
 		if(value.getType() == SmplType.INTEGER)
 		{
-			result = SmplValue.make(Math.sec(Double.valueOf(value.intValue())));
+			result = SmplValue.make( 1.0 / Math.cos(Double.valueOf(value.intValue())));
 		}
 		else if(value.getType() == SmplType.REAL)
 		{
-			result = SmplValue.make(Math.sec(value.doubleValue()));
+			result = SmplValue.make(1.0 / Math.cos(value.doubleValue()));
 		}
 		return result;
 	}
@@ -930,11 +950,11 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		SmplValue value = param.visit(this, env);
 		if(value.getType() == SmplType.INTEGER)
 		{
-			result = SmplValue.make(Math.cot(Double.valueOf(value.intValue())));
+			result = SmplValue.make(   1.0/ Math.tan(Double.valueOf(value.intValue()))   );
 		}
 		else if(value.getType() == SmplType.REAL)
 		{
-			result = SmplValue.make(Math.cot(value.doubleValue()));
+			result = SmplValue.make( 1.0 / Math.tan(value.doubleValue()));
 		}
 		return result;
 	}
@@ -946,14 +966,97 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 		SmplValue value = param.visit(this, env);
 		if(value.getType() == SmplType.INTEGER)
 		{
-			result = SmplValue.make(Math.cosec(Double.valueOf(value.intValue())));
+			result = SmplValue.make(1.0 / Math.sin(Double.valueOf(value.intValue())));
 		}
 		else if(value.getType() == SmplType.REAL)
 		{
-			result = SmplValue.make(Math.cosec(value.doubleValue()));
+			result = SmplValue.make(1.0 / Math.sin(value.doubleValue()));
 		}
 		return result;
 	}
-=======
->>>>>>> refs/remotes/OrrenJ/master
+
+	
+
+	@Override
+	public SmplValue<?> visitExpDifferentiate(ExpDifferentiate exp, Environment<SmplValue<?>> env) throws SmplException { 
+		if(exp.getForm())
+		{
+			Exp body = exp.getFunction().getBody();
+			SmplQuadratic quad = SmplValue.makeQuadratic(body.toString());
+
+			result =  SmplValue.makeStr(quad.differentiateThis());
+		}
+		else
+		{
+			SmplValue<?> function = env.get(exp.getVar());
+			if(function.getType() != SmplType.PROCEDURE)
+			{
+				throw new TypeSmplException(SmplType.PROCEDURE, function.getType());
+			}
+			else
+			{
+				SmplProcedure procedure = (SmplProcedure) function;
+				Exp body = procedure.getProcExp().getBody();
+				SmplQuadratic quad = SmplValue.makeQuadratic(body.toString());
+
+				result =  SmplValue.makeStr(quad.differentiateThis());
+			}
+		}
+
+
+		return result;
+	}
+
+
+	@Override
+    public SmplValue<?> visitExpPlot(ExpPlot exp, Environment<SmplValue<?>> env)throws SmplException {
+    	
+    	//temporary solution to displaying a given list
+        ArrayList<SmplPair> display = new ArrayList<SmplPair>();
+        Exp plot = exp.getExp();
+        String[] vars = {exp.getVar()};
+		
+
+
+        int r1, r2;
+        double[] inputs;
+
+        //implementation adapted from fnplot to be used with a gui
+        /*plotter.setPlotter(new GraphPlotter(gPanel));
+        r1 =  exp.getLo().visit(this, env).doubleValue();
+        r2 =  exp.getHi().visit(this, env).doubleValue();
+
+
+        if(r1 > r2)
+            inputs = plotter.sample(r2, r1);
+        else
+            inputs = plotter.sample(r1, r2);
+        //returns lasts evaluations
+
+        Point2D.Double[] pts = new Point2D.Double[inputs.length];
+        for(int i = 0; i < inputs.length; i++){
+            SmplValue<?>[] vals = {SmplValue.make(inputs[i])};
+            Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, env);
+            result = plot.visit(this, newEnv);
+            pts[i] = new Point2D.Double(inputs[i], result.doubleValue());
+
+        }
+
+        plotter.plot(pts);*/
+
+        r1 =  exp.getLo().visit(this, env).intValue();
+        r2 =  exp.getHi().visit(this, env).intValue();
+
+        for(int i = r1; i < r2; i++ )
+        {
+        	SmplValue<?>[] vals = {SmplValue.make(i)};
+        	Environment<SmplValue<?>> newEnv = new Environment<SmplValue<?>>(vars, vals, env);
+        	result = plot.visit(this, newEnv);
+        	display.add(SmplValue.makePair(vals[0], result));
+        }
+        System.out.println(display.toString());
+        return result;
+    }
+
+
 }

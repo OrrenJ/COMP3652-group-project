@@ -15,7 +15,8 @@ public enum SmplType {
 	VECTOR("vector"),
 	SUBVECTOR("subvector"),
 	EMPTYLIST("nil"),
-	PROCEDURE("user function");
+	PROCEDURE("user function"),
+	QUADRATIC("quadratic");
 
 	private final String docString;
 

@@ -1,3 +1,10 @@
 println(6 + 6);
-println(sin(x));
+//println(sin(x));
 
+def f proc(x) 23 * x ^ 2 + 6 * x ^ 3;
+
+println(f(1)); 
+
+println(diff(f));
+
+plot 23 * x ^ 2 + 6 * x ^ 3 for x in [3 : 6];

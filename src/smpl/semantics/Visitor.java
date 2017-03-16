@@ -55,7 +55,6 @@ public interface Visitor<S, T> {
 	public T visitExpReadInt(ExpReadInt exp, S arg) throws SmplException;
 	public T visitExpIf(ExpIf exp, S arg) throws SmplException;
 	public T visitExpCase(ExpCase exp, S arg) throws SmplException;
-<<<<<<< HEAD
 
 	//new visitors
 	public T visitExpSin(ExpSin exp, S arg) throws SmplException;
@@ -64,7 +63,12 @@ public interface Visitor<S, T> {
 	public T visitExpSec(ExpSec exp, S arg) throws SmplException;
 	public T visitExpCosec(ExpCosec exp, S arg) throws SmplException;
 	public T visitExpCot(ExpCot exp, S arg) throws SmplException;
-=======
->>>>>>> refs/remotes/OrrenJ/master
+	
+
+
+	public T visitExpDifferentiate(ExpDifferentiate exp, S arg) throws SmplException;
+
+	public T visitExpPlot(ExpPlot exp, S arg) throws SmplException;
+
 
 }

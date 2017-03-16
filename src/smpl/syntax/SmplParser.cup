@@ -72,11 +72,8 @@ terminal ASSIGN;
 // key words
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
 terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
-<<<<<<< HEAD
-terminal SIN, COS, TAN, SEC, COSEC, COT;
+terminal SIN, COS, TAN, SEC, COSEC, COT, DIFFERENTIATE, PLOT, IN, FOR;
 
-=======
->>>>>>> refs/remotes/OrrenJ/master
 
 // terminals with values
 terminal Integer INTEGER;
@@ -159,21 +156,20 @@ non terminal Exp expCase;
 non terminal ExpPair _case;
 non terminal ArrayList<ExpPair> cases;
 non terminal ArrayList<ExpPair> casesAux;
-<<<<<<< HEAD
 
 non terminal Exp concatList;
 
 non terminal Exp trigFunctions;
 
 
-non terminal  quadratic;
-non terminal  Polynomial polynomial;
+non terminal  Exp quadraticExp;
+
+non terminal Exp differentiate;
+
+non terminal Exp plot;
 
 
-=======
->>>>>>> refs/remotes/OrrenJ/master
 
-non terminal Exp concatList;
 
 non terminal empty;
 
@@ -213,7 +209,8 @@ expression ::= expCase:c {: RESULT = c; :} |
 				expIf:e {: RESULT = e; :} |
 				procExp:p {: RESULT = p; :} |
 				LBRACE stmtList:body RBRACE {: RESULT = body; :} |
-				arithExp:a {: RESULT = a; :};
+				arithExp:a {: RESULT = a; :}|
+				quadraticExp:q {: RESULT = q; :};
 
 letStmt ::= LET LPAREN bindings:bs RPAREN expression:body {:
 				RESULT = new StmtLet(bs, body);
@@ -362,7 +359,9 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			concatList:c {: RESULT = c; :}|
 			read:r {: RESULT = r; :}|
 			readint:r {: RESULT = r; :}|
-			trigFunctions:t {: RESULT = t; :};
+			trigFunctions:t {: RESULT = t; :}|
+			differentiate:d {: RESULT = d; :}|
+			plot:p {: RESULT = p;:};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -508,7 +507,6 @@ casesAux ::= COMMA _case:c casesAux:ca {:
 		:} | empty {:
 			RESULT = new ArrayList();
 		:};
-<<<<<<< HEAD
 
 //new functionality
 trigFunctions ::= SIN LPAREN expression: e RPAREN {:
@@ -530,8 +528,28 @@ trigFunctions ::= SIN LPAREN expression: e RPAREN {:
 				  	RESULT = new ExpCot(e);
 				 :};
 
+/*quadraticExp ::= VARIABLE:f LPAREN VARIABLE:x RPAREN EQUAL polynomial:p {:
+				  	RESULT = new ExpQuadratic(f,x,p);
+				 :};
 
-=======
->>>>>>> refs/remotes/OrrenJ/master
+polynomialExp ::= INTEGER:coefficent MUL VARIABLE:x POW INTEGER:degree {:
+					RESULT = new Polynomial(coefficent,x,degree);
+
+				:}; */
+
+differentiate ::= DIFFERENTIATE LPAREN procExp: p RPAREN{:
+					
+					RESULT = new ExpDifferentiate(p);
+				:}|
+				DIFFERENTIATE LPAREN VARIABLE:v RPAREN{:
+
+					RESULT = new ExpDifferentiate(v);
+				:};
+
+plot ::= PLOT expression:e FOR VARIABLE:v IN LBRACKET expression:start COLON expression:end RBRACKET{:
+
+		RESULT = new ExpPlot(e,v,start,end);
+
+		:};
 
 empty ::= ;
