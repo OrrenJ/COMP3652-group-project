@@ -6,6 +6,7 @@ package smpl.values;
 
 import smpl.sys.SmplException;
 import java.util.*;
+import java.io.*;
 
 public abstract class SmplValue<T extends SmplValue<T>> {
 
@@ -67,13 +68,8 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 			return new SmplPair(val1, val2);
 	}
 
-<<<<<<< HEAD
-	public static SmplPair makeFraction(SmplValue<?> val1, SmplValue<?> val2){
-			return new SmplFraction(val1, val2);
-	}
+	
 
-=======
->>>>>>> refs/remotes/OrrenJ/master
 	public static SmplList makeList(SmplValue<?> val1, SmplList val2){
 		return new SmplList(val1, val2);
 	}
@@ -95,6 +91,15 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public static SmplSubVector makeSubVector(SmplInt size, SmplProcedure proc){
 		return new SmplSubVector(size,proc);
 	}
+
+	/*
+	*	 Tokenizes a string to form a quadratic equation
+	*/
+	public static SmplQuadratic makeQuadratic(String q){
+		return new SmplQuadratic(q);
+	}
+
+
 
 	// return the type of a value
 	public abstract SmplType getType();
@@ -177,6 +182,10 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 		throw new TypeSmplException("Operator not applicable: &");
 	}
 
+	public SmplValue<?> quadratic(SmplValue<?> arg) throws SmplException {
+		throw new TypeSmplException("Function is not a quadratic");
+	}
+
 	// return literal values
 
 	public int intValue() throws TypeSmplException {
@@ -210,11 +219,9 @@ public abstract class SmplValue<T extends SmplValue<T>> {
 	public SmplList listValue() throws TypeSmplException {
 		throw new TypeSmplException(SmplType.LIST, getType());
 	} 
-<<<<<<< HEAD
 
-	public SmplList fractionValue() throws TypeSmplException {
-		throw new TypeSmplException(SmplType.FRACTION, getType());
+	public SmplQuadratic quadraticValue() throws TypeSmplException {
+		throw new TypeSmplException(SmplType.QUADRATIC, getType());
 	}
-=======
->>>>>>> refs/remotes/OrrenJ/master
+	
 }
