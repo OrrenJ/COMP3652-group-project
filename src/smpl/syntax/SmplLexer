@@ -154,6 +154,7 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL> "else"  {return new Symbol(sym.ELSE);}
 <YYINITIAL> "case"  {return new Symbol(sym.CASE);}
 
+//new additions
 <YYINITIAL> "sin"  {return new Symbol(sym.SIN);}
 <YYINITIAL> "cos"  {return new Symbol(sym.COS);}
 <YYINITIAL> "tan"  {return new Symbol(sym.TAN);}
@@ -167,6 +168,9 @@ comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\
 <YYINITIAL> "in"  {return new Symbol(sym.IN);}
 <YYINITIAL> "for"  {return new Symbol(sym.FOR);}
 
+<YYINITIAL> "limit"  {return new Symbol(sym.LIMIT);}
+<YYINITIAL> "as"  {return new Symbol(sym.AS);}
+<YYINITIAL> {ws}"->"{ws}  {return new Symbol(sym.APPROACHES);}
 
 
 

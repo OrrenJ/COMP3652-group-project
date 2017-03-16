@@ -70,5 +70,8 @@ public interface Visitor<S, T> {
 
 	public T visitExpPlot(ExpPlot exp, S arg) throws SmplException;
 
+	public T visitExpLimit(ExpLimit exp, S arg) throws SmplException;
+
+
 
 }
