@@ -8,3 +8,6 @@ println(f(1));
 println(diff(f));
 
 plot 23 * x ^ 2 + 6 * x ^ 3 for x in [3 : 6];
+
+
+limit f as (x -> 3);

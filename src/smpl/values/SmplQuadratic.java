@@ -52,6 +52,7 @@ public class SmplQuadratic extends SmplValue<SmplQuadratic>  {
 	public String differentiateThis(){
 
 		String differential = "";
+		int first = 0;
 
 		try{
 
@@ -137,7 +138,8 @@ public class SmplQuadratic extends SmplValue<SmplQuadratic>  {
 			name = "x";
 			Term term = new Term(coefficient,name,power, isPositive);
 			//exp.add(term);
-			differential+=  differentiateTerm(term);
+			differential+=  differentiateTerm(term, first);
+			first++;
 		}
 		
 		}
@@ -152,13 +154,13 @@ public class SmplQuadratic extends SmplValue<SmplQuadratic>  {
 
 
 
-	public String differentiateTerm(Term x){
+	public String differentiateTerm(Term x, int f){
 		int coefficient = x.getCoefficient();
 		int power = x.getPower();
 		boolean isPositive = x.positive();
 		String name = x.getName();
 
-		return (((isPositive && power > 0) ? ("+") : (!isPositive && power < 0) ? ("+") : ("-")) + " "
+		return (((  isPositive && power > 0 && f == 0) ? ("") : (isPositive && power > 0 && f > 0) ? ("+ ") : (!isPositive && power < 0 ) ? ("+ ") : ("- "))
 				+ ((coefficient * power < 0) ? (coefficient * power * -1) : (coefficient * power))
 				+ " * x ^ " +(power - 1) +" ");
 

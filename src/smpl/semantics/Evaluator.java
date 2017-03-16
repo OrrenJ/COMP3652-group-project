@@ -1058,5 +1058,45 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
         return result;
     }
 
+    @Override
+	public SmplValue<?> visitExpLimit(ExpLimit exp, Environment<SmplValue<?>> env) throws SmplException { 
 
+		String[] vars = {exp.getVar()};
+
+		env.put(exp.getVar(), exp.getApproach().visit(this, env));
+		if(exp.getForm())
+		{
+			Exp body = exp.getFunction();
+			
+			
+
+			
+			result =  body.visit(this, env);
+		}
+		else
+		{
+			
+			SmplValue<?> function = env.get(exp.getFuncVar());
+			if(function.getType() != SmplType.PROCEDURE)
+			{
+				throw new TypeSmplException(SmplType.PROCEDURE, function.getType());
+			}
+			else
+			{
+				SmplProcedure procedure = (SmplProcedure) function;
+				Exp body = procedure.getProcExp().getBody();
+				
+				result =  body.visit(this, env);
+			}
+
+			
+			
+
+
+
+		}
+
+
+		return result;
+	}
 }

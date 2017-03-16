@@ -73,6 +73,7 @@ terminal ASSIGN;
 terminal PAIR, PAIRCHECK, CAR, CDR, PRINT, PRINTLN, LIST, EMPTYLIST, PROC, SUBSTR;
 terminal EQV, EQUAL, CALL, LAZY, DEF, READ, READINT, IF, ELSE, THEN, CASE, SIZE, LET, BE;
 terminal SIN, COS, TAN, SEC, COSEC, COT, DIFFERENTIATE, PLOT, IN, FOR;
+terminal APPROACHES, LIMIT, AS;
 
 
 // terminals with values
@@ -168,6 +169,7 @@ non terminal Exp differentiate;
 
 non terminal Exp plot;
 
+non terminal Exp limit;
 
 
 
@@ -361,7 +363,8 @@ builtIn ::= pair:p {: RESULT = p; :} |
 			readint:r {: RESULT = r; :}|
 			trigFunctions:t {: RESULT = t; :}|
 			differentiate:d {: RESULT = d; :}|
-			plot:p {: RESULT = p;:};
+			plot:p {: RESULT = p;:}|
+			limit:l {: RESULT = l; :};
 
 pair ::= PAIR LPAREN expression:e1 COMMA expression:e2 RPAREN {:
 			RESULT = new ExpPair(e1, e2); :};
@@ -551,5 +554,14 @@ plot ::= PLOT expression:e FOR VARIABLE:v IN LBRACKET expression:start COLON exp
 		RESULT = new ExpPlot(e,v,start,end);
 
 		:};
+
+
+limit ::= LIMIT procExp:func AS LPAREN VARIABLE:x APPROACHES expression:e RPAREN{:
+		RESULT = new ExpLimit(func, x, e);
+	:}|
+	LIMIT VARIABLE:func AS LPAREN VARIABLE:x APPROACHES expression:e RPAREN{:
+		RESULT = new ExpLimit(func, x, e);
+		:};
+
 
 empty ::= ;
